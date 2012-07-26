@@ -38,6 +38,12 @@ namespace bit
 		// Tile dimensions of map
 		int mapWidth, mapHeight;
 		
+		/**
+		 * Checks whether the player is blocked from walking
+		 * onto a given coordinate
+		 */
+		bool isWall(int x, int y);
+		
 	private:
 		void loadTileset(JSONValue &tilesetObject);
 		

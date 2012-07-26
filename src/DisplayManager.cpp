@@ -5,8 +5,7 @@
  */
 
 #include "DisplayManager.h"
-#include "MapManager.h"
-#include "AssetManager.h"
+#include "EventManager.h"
 #include "JSONValue.h"
 #include "Exception.h"
 
@@ -18,18 +17,19 @@ using namespace sf;
 
 DisplayManager::DisplayManager()
 {
-	// TEMP
-	
-	running = true;
+	eventManager.reset(new EventManager);
 }
 
 
-void DisplayManager::createWindow(JSONValue &windowObject)
+void DisplayManager::openWindow(JSONValue &windowObject)
 {
-	// Create SFML RenderWindow
+	// Extract all the JSON data
 	
 	int width = windowObject["width"].toInteger();
 	int height = windowObject["height"].toInteger();
+	unsigned int framerate = windowObject["framerate"].toInteger();
+	
+	// Create SFML RenderWindow
 	
 	VideoMode videoMode(width, height, 32);
 	std::string title = windowObject["title"].toString();
@@ -40,56 +40,40 @@ void DisplayManager::createWindow(JSONValue &windowObject)
 	if (!window)
 		throw bit::Exception("Window could not be opened");
 	
-	// Create MapManager
-	
-	mapManager.reset(new MapManager(width, height));
-	
 	// Set framerate limit
 	
-	unsigned int framerate = windowObject["framerate"].toInteger();
 	window->setFramerateLimit(framerate);
+	
+	eventManager->window = window;
+}
+
+
+void DisplayManager::closeWindow()
+{
+	running = false;
 }
 
 
 void DisplayManager::run()
 {
+	running = true;
+	
 	if (!window)
 		throw bit::Exception("Window is not opened");
 	
-	if (!mapManager)
-		throw bit::Exception("MapManager is not initialized");
-	
-	// TEMP
-	// Start the poll/render loop
-	
 	while (running)
 	{
-		pollEvents();
+		eventManager->checkEvents();
 		render();
-	}
-}
-
-
-void DisplayManager::pollEvents()
-{
-	Event event;
-	
-	while (window->pollEvent(event))
-	{
-		if (event.type == Event::Closed)
-		{
-			running = false;
-		}
 	}
 }
 
 
 void DisplayManager::render()
 {
-	window->clear();
+	window->clear(Color(128, 0, 128));
 	
-	// Render MapManager
+	// Render the window
 	
-	window->draw(*mapManager);
 	window->display();
 }

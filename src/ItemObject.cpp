@@ -19,6 +19,12 @@ ItemObject::ItemObject()
 }
 
 
+ItemObject::~ItemObject()
+{
+	printf("ItemObject::~ItemObject\n");
+}
+
+
 Local<Object> ItemObject::createInstance()
 {
 	HandleScope handleScope;

@@ -5,25 +5,24 @@
  */
 
 #include "Application.h"
-#include "AssetManager.h"
 #include "ScriptManager.h"
 #include "DisplayManager.h"
+#include "ContentManager.h"
 #include "JSONValue.h"
-#include "Entity.h"
 #include "Exception.h"
-#include "MapManager.h"
-#include "GameObject.h"
+#include "ConsoleObject.h"
 
-#include <SFML/System.hpp>
+#include <boost/thread/thread.hpp>
 #include <string>
 #include <iostream>
 
 using namespace bit;
+using namespace std;
 
 
 Application::Application()
 {
-	assetManager.reset(new AssetManager);
+	contentManager.reset(new ContentManager);
 	scriptManager.reset(new ScriptManager);
 	displayManager.reset(new DisplayManager);
 }
@@ -31,39 +30,24 @@ Application::Application()
 
 void Application::start()
 {
-	initScriptObjects();
-	loadConfigFiles();
+	// Register console object
 	
-	// TEMP
+	//ConsoleObject *consoleObject = new ConsoleObject;
+	//scriptManager->registerObject(consoleObject, "console");
 	
-	std::string mapData = assetManager->loadFile("map.json");
-	JSONValue mapObject = scriptManager->parseJSON(mapData);
-	displayManager->mapManager->loadMap(mapObject);
+	// Load configuration file
 	
-	// End TEMP
+	string configData = contentManager->loadText("config.json");
+	JSONValue configValue = scriptManager->parseJSON(configData);
+	
+	// Open the DisplayManager window
+	
+	JSONValue windowValue = configValue["window"];
+	displayManager->openWindow(windowValue);
+	
+	// Run the DisplayManager in the main thread
+	// OS X requires that event checking should be done in the main thread,
+	// so this is the last thing this function should do.
 	
 	displayManager->run();
 }
-
-
-void Application::initScriptObjects()
-{
-	// game
-	
-	scriptManager->registerObject(new GameObject(), "game");
-}
-
-
-void Application::loadConfigFiles()
-{
-	// Load config.json into configValue
-	
-	std::string configData = assetManager->loadFile("config.json");
-	JSONValue configValue = scriptManager->parseJSON(configData);
-	
-	// Create window
-	
-	JSONValue windowValue = configValue["window"];
-	displayManager->createWindow(windowValue);
-}
-

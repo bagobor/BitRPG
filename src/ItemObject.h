@@ -18,6 +18,7 @@ namespace bit
 	{
 	public:
 		ItemObject();
+		~ItemObject();
 		
 		v8::Local<v8::Object> createInstance();
 		static v8::Handle<v8::Value> constructor(const v8::Arguments &args);

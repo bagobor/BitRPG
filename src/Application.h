@@ -12,11 +12,14 @@
 
 namespace bit
 {
+	/**
+	 * Initializes all components needed to launch the game
+	 */
 	class Application
 	{
 	public:
 		/**
-		 * Instantiates all managers needed in the Application
+		 * Creates all managers needed in the Application
 		 */
 		Application();
 		
@@ -25,13 +28,9 @@ namespace bit
 		 */
 		void start();
 		
-		AssetManagerPtr assetManager;
+		ContentManagerPtr contentManager;
 		ScriptManagerPtr scriptManager;
 		DisplayManagerPtr displayManager;
-		
-	private:
-		void initScriptObjects();
-		void loadConfigFiles();
 	};
 }
 

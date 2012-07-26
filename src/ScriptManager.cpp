@@ -75,7 +75,7 @@ void ScriptManager::registerObject(ScriptObject *scriptObject, string name)
 }
 
 
-void ScriptManager::registerClass(InvocationCallback constructor, std::string name)
+void ScriptManager::registerConstructor(InvocationCallback constructor, std::string name)
 {
 	HandleScope handleScope;
 	

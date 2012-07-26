@@ -20,7 +20,7 @@ include_directories(${V8_INCLUDE_DIR})
 
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_STATIC_RUNTIME ON)
-find_package(Boost 1.36.0 COMPONENTS system filesystem REQUIRED)
+find_package(Boost 1.49.0 COMPONENTS system filesystem thread REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
 
@@ -30,25 +30,27 @@ include_directories(${Boost_INCLUDE_DIRS})
 add_executable(BitRPG
 	main.cpp
 	BitRPG.h
-	Exception.cpp Exception.h
-#	Application.cpp Application.h
-	AssetManager.cpp AssetManager.h
+	Exception.cpp
+	Application.cpp
+	ContentManager.cpp
 	
-	ScriptManager.cpp ScriptManager.h
-	ScriptObject.cpp ScriptObject.h
-#	ScriptClass.cpp ScriptClass.h
-	ItemObject.cpp ItemObject.h
+	ScriptManager.cpp
+#	ScriptObject.cpp
+#	ScriptClass.cpp
+#	ItemObject.cpp
 	
-	ConsoleObject.cpp ConsoleObject.h
-	ScriptException.cpp ScriptException.h
-#	DisplayManager.cpp DisplayManager.h
-#	StateManager.cpp StateManager.h
-#	Entity.cpp Entity.h
-#	GameObject.cpp GameObject.h
-	JSONValue.cpp JSONValue.h
-#	MapLayer.cpp MapLayer.h
-#	MapManager.cpp MapManager.h
-#	MapTile.h
+#	ConsoleObject.cpp
+	ScriptException.cpp
+#	Counter.cpp
+	
+	DisplayManager.cpp
+	EventManager.cpp
+#	StateManager.cpp
+#	Entity.cpp
+#	GameObject.cpp
+	JSONValue.cpp
+#	MapLayer.cpp
+#	MapManager.cpp
 )
 
 

@@ -85,16 +85,13 @@ bool JSONValue::isArray()
 
 bool JSONValue::isBoolean()
 {
-	// The second term here may be redundant.
-	// Does IsBoolean() return true for BooleanObjects?
-	
-	return value->IsBoolean() || value->IsBooleanObject();
+	return value->IsBooleanObject();
 }
 
 
 bool JSONValue::isNumber()
 {
-	return value->IsNumber();
+	return value->IsNumberObject();
 }
 
 
@@ -106,7 +103,7 @@ bool JSONValue::isObject()
 
 bool JSONValue::isString()
 {
-	return value->IsString();
+	return value->IsStringObject();
 }
 
 
@@ -143,6 +140,8 @@ std::string JSONValue::toString()
 int64_t JSONValue::toInteger()
 {
 	HandleScope handleScope;
+	
+	// Convert to Integer
 	
 	Local<Value> valueLocal = Local<Value>::New(value);
 	Local<Integer> valueInteger = Local<Integer>::Cast(valueLocal);

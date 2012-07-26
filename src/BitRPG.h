@@ -14,9 +14,10 @@
 namespace bit
 {
 	class Application;
-	class AssetManager;
+	class ContentManager;
 	class ScriptManager;
 	class DisplayManager;
+	class EventManager;
 	class MapManager;
 	class Entity;
 	class JSONValue;
@@ -27,9 +28,10 @@ namespace bit
 	class MapTile;
 	
 	typedef boost::shared_ptr<Application> ApplicationPtr;
-	typedef boost::shared_ptr<AssetManager> AssetManagerPtr;
+	typedef boost::shared_ptr<ContentManager> ContentManagerPtr;
 	typedef boost::shared_ptr<ScriptManager> ScriptManagerPtr;
 	typedef boost::shared_ptr<DisplayManager> DisplayManagerPtr;
+	typedef boost::shared_ptr<EventManager> EventManagerPtr;
 	typedef boost::shared_ptr<MapManager> MapManagerPtr;
 	typedef boost::shared_ptr<Entity> EntityPtr;
 	typedef boost::shared_ptr<MapTile> MapTilePtr;

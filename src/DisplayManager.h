@@ -12,30 +12,30 @@
 #include <SFML/Graphics.hpp>
 #include <boost/scoped_ptr.hpp>
 
-class MapManager;
-class ContentManager;
-class JSONValue;
-
 
 namespace bit
 {
+	/**
+	 * Manages the window and final graphics rendering of the game
+	 */
 	class DisplayManager
 	{
 	public:
 		DisplayManager();
 		
-		void createWindow(JSONValue &windowValue);
+		/**
+		 * Opens a window with the given window configuration
+		 */
+		void openWindow(JSONValue &windowValue);
+		void closeWindow();
 		void run();
 		
-		MapManagerPtr mapManager;
+		boost::shared_ptr<sf::RenderWindow> window;
+		EventManagerPtr eventManager;
 		
 	private:
-		void pollEvents();
 		void render();
 		
-		boost::scoped_ptr<sf::RenderWindow> window;
-		
-		// TEMP
 		bool running;
 	};
 }

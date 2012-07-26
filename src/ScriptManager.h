@@ -34,7 +34,7 @@ namespace bit
 		/**
 		 * Adds a class constructor to the V8 globals
 		 */
-		void registerClass(v8::InvocationCallback constructor, std::string name);
+		void registerConstructor(v8::InvocationCallback constructor, std::string name);
 		
 		/**
 		 * Runs a multi-line script in the current V8 context
