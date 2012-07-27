@@ -31,6 +31,7 @@ namespace bit
 		ContentManagerPtr contentManager;
 		ScriptManagerPtr scriptManager;
 		DisplayManagerPtr displayManager;
+		EventManagerPtr eventManager;
 	};
 }
 

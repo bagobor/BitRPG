@@ -17,9 +17,12 @@ namespace bit
 	{
 	public:
 		void checkEvents();
-		void checkEvent(sf::Event &event);
 		
+		DisplayManagerPtr displayManager;
 		boost::shared_ptr<sf::Window> window;
+		
+	private:
+		void checkEvent(sf::Event &event);
 	};
 }
 

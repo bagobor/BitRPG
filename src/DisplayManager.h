@@ -30,12 +30,13 @@ namespace bit
 		void closeWindow();
 		void run();
 		
-		boost::shared_ptr<sf::RenderWindow> window;
 		EventManagerPtr eventManager;
+		boost::shared_ptr<sf::RenderWindow> window;
 		
 	private:
 		void render();
 		
+		int zoom;
 		bool running;
 	};
 }

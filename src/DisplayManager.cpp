@@ -17,22 +17,35 @@ using namespace sf;
 
 DisplayManager::DisplayManager()
 {
-	eventManager.reset(new EventManager);
 }
 
 
 void DisplayManager::openWindow(JSONValue &windowObject)
 {
+	if (window)
+		throw bit::Exception("Window is already opened");
+	
 	// Extract all the JSON data
 	
 	int width = windowObject["width"].toInteger();
 	int height = windowObject["height"].toInteger();
-	unsigned int framerate = windowObject["framerate"].toInteger();
+	int zoom = windowObject["zoom"].toInteger();
+	int framerate = windowObject["framerate"].toInteger();
+	std::string title = windowObject["title"].toString();
+	
+	// Validate the config file
+	
+	if (width <= 0 || height <= 0)
+		throw bit::Exception("Window size must be greater than zero");
+	
+	if (zoom <= 0)
+		throw bit::Exception("Zoom must be greater than zero");
+	
+	this->zoom = zoom;
 	
 	// Create SFML RenderWindow
 	
-	VideoMode videoMode(width, height, 32);
-	std::string title = windowObject["title"].toString();
+	VideoMode videoMode(width * zoom, height * zoom, 32);
 	Uint32 windowStyle = Style::Titlebar | Style::Close;
 	
 	window.reset(new RenderWindow(videoMode, title.c_str(), windowStyle));
@@ -43,8 +56,6 @@ void DisplayManager::openWindow(JSONValue &windowObject)
 	// Set framerate limit
 	
 	window->setFramerateLimit(framerate);
-	
-	eventManager->window = window;
 }
 
 
