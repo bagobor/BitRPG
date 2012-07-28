@@ -35,6 +35,11 @@ namespace bit
 		 */
 		std::string loadText(const std::string &filename);
 		
+		/**
+		 * Loads a font from a file
+		 */
+		sf::FontPtr loadFont(const std::string &filename);
+		
 	private:
 		std::string getAbsoluteFilename(const std::string &filename);
 		

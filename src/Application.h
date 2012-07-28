@@ -32,6 +32,7 @@ namespace bit
 		ScriptManagerPtr scriptManager;
 		DisplayManagerPtr displayManager;
 		EventManagerPtr eventManager;
+		MapManagerPtr mapManager;
 	};
 }
 

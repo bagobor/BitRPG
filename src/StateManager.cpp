@@ -4,6 +4,7 @@
  *
  */
 
-
 #include "StateManager.h"
+
+using namespace bit;
 

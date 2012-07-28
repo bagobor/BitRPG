@@ -31,6 +31,7 @@ namespace bit
 		void run();
 		
 		EventManagerPtr eventManager;
+		MapManagerPtr mapManager;
 		boost::shared_ptr<sf::RenderWindow> window;
 		
 	private:
@@ -38,6 +39,8 @@ namespace bit
 		
 		int zoom;
 		bool running;
+		
+		boost::shared_ptr<sf::View> windowView;
 	};
 }
 

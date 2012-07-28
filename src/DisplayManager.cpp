@@ -6,6 +6,7 @@
 
 #include "DisplayManager.h"
 #include "EventManager.h"
+#include "MapManager.h"
 #include "JSONValue.h"
 #include "Exception.h"
 
@@ -56,6 +57,17 @@ void DisplayManager::openWindow(JSONValue &windowObject)
 	// Set framerate limit
 	
 	window->setFramerateLimit(framerate);
+	
+	// Create window view
+	
+	windowView.reset(new View);
+	windowView->setCenter(0, 0);
+	windowView->zoom(1.0f / zoom);
+	window->setView(*windowView);
+	
+	// Initialize the MapManager
+	
+	mapManager->initSize(width, height);
 }
 
 
@@ -72,6 +84,8 @@ void DisplayManager::run()
 	if (!window)
 		throw bit::Exception("Window is not opened");
 	
+	// Run the display loop
+	
 	while (running)
 	{
 		eventManager->checkEvents();
@@ -82,9 +96,11 @@ void DisplayManager::run()
 
 void DisplayManager::render()
 {
-	window->clear(Color(128, 0, 128));
+	window->clear(Color::Black);
 	
-	// Render the window
+	// Render window
+	
+	window->draw(*mapManager);
 	
 	window->display();
 }

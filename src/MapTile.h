@@ -16,7 +16,6 @@ namespace bit
 	{
 	public:
 		sf::TexturePtr texture;
-		bool collides;
 	};
 }
 

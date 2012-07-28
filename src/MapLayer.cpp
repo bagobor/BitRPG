@@ -7,13 +7,11 @@
 #include "MapLayer.h"
 #include "Exception.h"
 #include "JSONValue.h"
-#include "MapManager.h"
-#include "MapTile.h"
 
 using namespace sf;
 
 
-/*MapLayer::MapLayer(MapManager *mapManager, JSONValue &layerObject)
+MapLayer::MapLayer(MapManager *mapManager, JSONValue &layerObject)
 {
 	// Extract layer data
 	
@@ -57,7 +55,7 @@ using namespace sf;
 		
 		mapSprites.push_back(tileSprite);
 	}
-}*/
+}
 
 
 void MapLayer::draw(RenderTarget &target, RenderStates states) const

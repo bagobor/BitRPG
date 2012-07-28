@@ -22,10 +22,9 @@ namespace bit
 	class Entity;
 	class JSONValue;
 	class MapLayer;
+	class MapTile;
 	class ScriptObject;
 	class ScriptClass;
-	
-	class MapTile;
 	
 	typedef boost::shared_ptr<Application> ApplicationPtr;
 	typedef boost::shared_ptr<ContentManager> ContentManagerPtr;
@@ -34,8 +33,8 @@ namespace bit
 	typedef boost::shared_ptr<EventManager> EventManagerPtr;
 	typedef boost::shared_ptr<MapManager> MapManagerPtr;
 	typedef boost::shared_ptr<Entity> EntityPtr;
-	typedef boost::shared_ptr<MapTile> MapTilePtr;
 	typedef boost::shared_ptr<MapLayer> MapLayerPtr;
+	typedef boost::shared_ptr<MapTile> MapTilePtr;
 }
 
 
@@ -44,6 +43,8 @@ namespace sf
 	typedef boost::shared_ptr<sf::Image> ImagePtr;
 	typedef boost::shared_ptr<sf::Texture> TexturePtr;
 	typedef boost::shared_ptr<sf::Sprite> SpritePtr;
+	typedef boost::shared_ptr<sf::Font> FontPtr;
+	typedef boost::shared_ptr<sf::Text> TextPtr;
 }
 
 #endif

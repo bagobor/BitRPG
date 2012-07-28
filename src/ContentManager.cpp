@@ -62,7 +62,7 @@ ImagePtr ContentManager::loadImage(const string &filename)
 }
 
 
-sf::TexturePtr ContentManager::loadTexture(const string &filename,
+TexturePtr ContentManager::loadTexture(const string &filename,
 	const IntRect &area)
 {
 	// Get image from filename
@@ -93,6 +93,22 @@ string ContentManager::loadText(const string &filename)
 	buffer << file.rdbuf();
 	
 	return buffer.str();
+}
+
+
+FontPtr ContentManager::loadFont(const string &filename)
+{
+	string filePath = getAbsoluteFilename(filename);
+	
+	// Create the font
+	
+	FontPtr font(new Font);
+	bool success = font->loadFromFile(filePath);
+	
+	if (!success)
+		throw bit::Exception("Font " + filePath + " could not be loaded");
+	
+	return font;
 }
 
 

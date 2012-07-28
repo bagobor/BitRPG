@@ -35,13 +35,11 @@ add_executable(BitRPG
 	ContentManager.cpp
 	
 	ScriptManager.cpp
-#	ScriptObject.cpp
-#	ScriptClass.cpp
+	ScriptObject.cpp
 #	ItemObject.cpp
 	
-#	ConsoleObject.cpp
+	ConsoleObject.cpp
 	ScriptException.cpp
-#	Counter.cpp
 	
 	DisplayManager.cpp
 	EventManager.cpp
@@ -50,7 +48,7 @@ add_executable(BitRPG
 #	GameObject.cpp
 	JSONValue.cpp
 #	MapLayer.cpp
-#	MapManager.cpp
+	MapManager.cpp
 )
 
 

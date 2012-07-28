@@ -11,7 +11,7 @@
     {
         "tab_size": 4,
         "sublimegdb_workingdir": ".",
-        "sublimegdb_commandline": "gdb --interpreter=mi ./bin/BitRPG"
+        "sublimegdb_commandline": "cd bin; gdb --interpreter=mi BitRPG"
     },
     "build_systems":
     [

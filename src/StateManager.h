@@ -4,17 +4,19 @@
  *
  */
 
-
 #ifndef BitRPG_StateManager_h
 #define BitRPG_StateManager_h
 
 #include "BitRPG.h"
 
 
-class StateManager
+namespace bit
 {
-public:
-	
-};
+	class StateManager
+	{
+	public:
+		
+	};
+}
 
 #endif

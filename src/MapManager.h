@@ -11,7 +11,6 @@
 #include "JSONValue.h"
 
 #include <SFML/Graphics.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <map>
 
 class Entity;
@@ -23,14 +22,14 @@ namespace bit
 	class MapManager : public sf::Drawable
 	{
 	public:
-		MapManager(int width, int height);
+		MapManager();
 		
+		void initSize(int width, int height);
 		void loadMap(JSONValue &mapObject);
-		MapTilePtr getTile(int gid);
 		
 		void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 		
-		void addEntity(EntityPtr entity, int zOrder=0);
+		// void addEntity(EntityPtr entity, int zOrder);
 		
 		// Pixel dimensions of map tile
 		int tileWidth, tileHeight;
@@ -44,20 +43,25 @@ namespace bit
 		 */
 		bool isWall(int x, int y);
 		
+		ContentManagerPtr contentManager;
+		MapManagerPtr mapManager;
+		
 	private:
 		void loadTileset(JSONValue &tilesetObject);
+		void loadLayer(JSONValue &layerObject, int zOrder);
+		MapTilePtr getTile(int gid);
 		
-		boost::scoped_ptr<sf::RenderTexture> mapTexture;
-		boost::scoped_ptr<sf::Sprite> mapSprite;
-		boost::scoped_ptr<sf::View> mapView;
+		boost::shared_ptr<sf::RenderTexture> mapTexture;
+		boost::shared_ptr<sf::Sprite> mapSprite;
+		boost::shared_ptr<sf::View> mapView;
 		
 		// Drawable objects
 		
 		// <z-order, entity>
 		std::multimap<int, EntityPtr> entities;
 		
-		// <z-order, mapLayer>
-		std::multimap<int, MapLayerPtr> layers;
+		// <z-order, tileSprite>
+		std::multimap<int, sf::SpritePtr> layerSprites;
 		
 		// <gid, mapTile>
 		std::multimap<int, MapTilePtr> tiles;

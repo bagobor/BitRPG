@@ -9,9 +9,10 @@
 #include "ScriptManager.h"
 #include "DisplayManager.h"
 #include "EventManager.h"
+#include "ConsoleObject.h"
 #include "JSONValue.h"
 #include "Exception.h"
-#include "ConsoleObject.h"
+#include "MapManager.h"
 
 #include <boost/thread/thread.hpp>
 #include <string>
@@ -29,11 +30,14 @@ Application::Application()
 	scriptManager.reset(new ScriptManager);
 	displayManager.reset(new DisplayManager);
 	eventManager.reset(new EventManager);
+	mapManager.reset(new MapManager);
 	
 	// Satisfy component dependencies
 	
 	displayManager->eventManager = eventManager;
+	displayManager->mapManager = mapManager;
 	eventManager->displayManager = displayManager;
+	mapManager->contentManager = contentManager;
 }
 
 
@@ -41,8 +45,8 @@ void Application::start()
 {
 	// Register console object
 	
-	//ConsoleObject *consoleObject = new ConsoleObject;
-	//scriptManager->registerObject(consoleObject, "console");
+	ConsoleObject *consoleObject = new ConsoleObject;
+	scriptManager->registerObject(consoleObject, "console");
 	
 	// Load configuration file
 	
@@ -55,6 +59,12 @@ void Application::start()
 	displayManager->openWindow(windowValue);
 	
 	eventManager->window = displayManager->window;
+	
+	// TEMP Load the map
+	
+	string strandedText = contentManager->loadText("maps/stranded.json");
+	JSONValue mapObject = scriptManager->parseJSON(strandedText);
+	mapManager->loadMap(mapObject);
 	
 	// Run the DisplayManager in the main thread
 	// OS X requires that event checking should be done in the main thread,
