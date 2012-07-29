@@ -7,6 +7,7 @@
 #include "SplashState.h"
 #include "Exception.h"
 
+#include <stdio.h>
 #include <SFML/Window.hpp>
 
 using namespace bit;

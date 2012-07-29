@@ -1,7 +1,7 @@
 
 # SFML library
 
-set(SFML_STATIC_LIBRARIES TRUE)
+#set(SFML_STATIC_LIBRARIES TRUE)
 find_package(SFML 2 COMPONENTS system window graphics REQUIRED)
 
 include_directories(${SFML_INCLUDE_DIR})
