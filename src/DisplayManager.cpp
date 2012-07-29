@@ -6,10 +6,12 @@
 
 #include "DisplayManager.h"
 #include "EventManager.h"
-#include "MapManager.h"
+#include "StateManager.h"
+#include "State.h"
 #include "JSONValue.h"
 #include "Exception.h"
 
+#include <SFML/Window.hpp>
 #include <string>
 
 using namespace bit;
@@ -57,38 +59,56 @@ void DisplayManager::openWindow(JSONValue &windowObject)
 	// Set framerate limit
 	
 	window->setFramerateLimit(framerate);
+	deltaTime = 1.0f / framerate;
 	
 	// Create window view
 	
-	windowView.reset(new View);
-	windowView->setCenter(0, 0);
+	windowView.reset(new View(window->getView()));
+	windowView->setCenter(width / 2.0f, height / 2.0f);
 	windowView->zoom(1.0f / zoom);
 	window->setView(*windowView);
-	
-	// Initialize the MapManager
-	
-	mapManager->initSize(width, height);
 }
 
 
 void DisplayManager::closeWindow()
 {
-	running = false;
+	window->close();
 }
 
 
 void DisplayManager::run()
 {
-	running = true;
-	
 	if (!window)
 		throw bit::Exception("Window is not opened");
 	
 	// Run the display loop
 	
-	while (running)
+	while (true)
 	{
-		eventManager->checkEvents();
+		// Get the current state
+		
+		State &currentState = stateManager->getState();
+		
+		Event event;
+		
+		while (window->pollEvent(event))
+		{
+			// Close the window and stop the loop if the Escape key was pressed
+			
+			if (event.type == Event::Closed)
+			{
+				closeWindow();
+				return;
+			}
+			
+			// Let the current state process the event
+			
+			currentState.checkEvent(event);
+		}
+		
+		// Render the current state
+		
+		currentState.advanceFrame(deltaTime);
 		render();
 	}
 }
@@ -100,7 +120,7 @@ void DisplayManager::render()
 	
 	// Render window
 	
-	window->draw(*mapManager);
+	window->draw(stateManager->getState());
 	
 	window->display();
 }

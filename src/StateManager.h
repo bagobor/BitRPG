@@ -9,13 +9,20 @@
 
 #include "BitRPG.h"
 
+#include <boost/thread/mutex.hpp>
+
 
 namespace bit
 {
 	class StateManager
 	{
 	public:
+		State &getState();
+		void changeState(StatePtr newState);
 		
+	private:
+		StatePtr currentState;
+		boost::mutex stateMutex;
 	};
 }
 

@@ -42,8 +42,8 @@ add_executable(BitRPG
 	ScriptException.cpp
 	
 	DisplayManager.cpp
-	EventManager.cpp
-#	StateManager.cpp
+	StateManager.cpp
+	SplashState.cpp
 #	Entity.cpp
 #	GameObject.cpp
 	JSONValue.cpp

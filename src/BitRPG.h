@@ -17,6 +17,7 @@ namespace bit
 	class ContentManager;
 	class ScriptManager;
 	class DisplayManager;
+	class StateManager;
 	class EventManager;
 	class MapManager;
 	class Entity;
@@ -25,16 +26,19 @@ namespace bit
 	class MapTile;
 	class ScriptObject;
 	class ScriptClass;
+	class State;
 	
 	typedef boost::shared_ptr<Application> ApplicationPtr;
 	typedef boost::shared_ptr<ContentManager> ContentManagerPtr;
 	typedef boost::shared_ptr<ScriptManager> ScriptManagerPtr;
 	typedef boost::shared_ptr<DisplayManager> DisplayManagerPtr;
+	typedef boost::shared_ptr<StateManager> StateManagerPtr;
 	typedef boost::shared_ptr<EventManager> EventManagerPtr;
 	typedef boost::shared_ptr<MapManager> MapManagerPtr;
 	typedef boost::shared_ptr<Entity> EntityPtr;
 	typedef boost::shared_ptr<MapLayer> MapLayerPtr;
 	typedef boost::shared_ptr<MapTile> MapTilePtr;
+	typedef boost::shared_ptr<State> StatePtr;
 }
 
 

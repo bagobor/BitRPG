@@ -8,11 +8,13 @@
 #include "ContentManager.h"
 #include "ScriptManager.h"
 #include "DisplayManager.h"
+#include "StateManager.h"
 #include "EventManager.h"
 #include "ConsoleObject.h"
 #include "JSONValue.h"
 #include "Exception.h"
-#include "MapManager.h"
+
+#include "SplashState.h"
 
 #include <boost/thread/thread.hpp>
 #include <string>
@@ -30,14 +32,13 @@ Application::Application()
 	scriptManager.reset(new ScriptManager);
 	displayManager.reset(new DisplayManager);
 	eventManager.reset(new EventManager);
-	mapManager.reset(new MapManager);
+	stateManager.reset(new StateManager);
 	
 	// Satisfy component dependencies
 	
 	displayManager->eventManager = eventManager;
-	displayManager->mapManager = mapManager;
+	displayManager->stateManager = stateManager;
 	eventManager->displayManager = displayManager;
-	mapManager->contentManager = contentManager;
 }
 
 
@@ -60,11 +61,13 @@ void Application::start()
 	
 	eventManager->window = displayManager->window;
 	
-	// TEMP Load the map
+	// TEMP Load the splash state
 	
-	string strandedText = contentManager->loadText("maps/stranded.json");
-	JSONValue mapObject = scriptManager->parseJSON(strandedText);
-	mapManager->loadMap(mapObject);
+	boost::shared_ptr<SplashState> splashState(new SplashState);
+	splashState->setFadeTimes(1.0f, 2.0f, 0.5f);
+	splashState->setTexture(contentManager->loadTexture("images/bitrpg.gif"));
+	
+	stateManager->changeState(splashState);
 	
 	// Run the DisplayManager in the main thread
 	// OS X requires that event checking should be done in the main thread,

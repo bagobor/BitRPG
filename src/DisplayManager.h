@@ -10,7 +10,6 @@
 #include "BitRPG.h"
 
 #include <SFML/Graphics.hpp>
-#include <boost/scoped_ptr.hpp>
 
 
 namespace bit
@@ -31,14 +30,14 @@ namespace bit
 		void run();
 		
 		EventManagerPtr eventManager;
-		MapManagerPtr mapManager;
+		StateManagerPtr stateManager;
 		boost::shared_ptr<sf::RenderWindow> window;
 		
 	private:
 		void render();
 		
 		int zoom;
-		bool running;
+		float deltaTime;
 		
 		boost::shared_ptr<sf::View> windowView;
 	};
