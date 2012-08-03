@@ -11,6 +11,7 @@
 #include "JSONValue.h"
 #include "Exception.h"
 
+#include "SplashState.h"
 #include <SFML/Window.hpp>
 #include <string>
 
@@ -83,11 +84,11 @@ void DisplayManager::run()
 	
 	// Run the display loop
 	
-	while (true)
+	while (window)
 	{
 		// Get the current state
 		
-		State &currentState = stateManager->getState();
+		StatePtr currentState = stateManager->getState();
 		
 		Event event;
 		
@@ -98,17 +99,19 @@ void DisplayManager::run()
 			if (event.type == Event::Closed)
 			{
 				closeWindow();
-				return;
 			}
 			
 			// Let the current state process the event
 			
-			currentState.checkEvent(event);
+			if (currentState)
+				currentState->checkEvent(event);
 		}
 		
 		// Render the current state
 		
-		currentState.advanceFrame(deltaTime);
+		if (currentState)
+			currentState->advanceFrame(deltaTime);
+		
 		render();
 	}
 }
@@ -120,7 +123,10 @@ void DisplayManager::render()
 	
 	// Render window
 	
-	window->draw(stateManager->getState());
+	StatePtr currentState = stateManager->getState();
+	
+	if (currentState)
+		window->draw(*currentState);
 	
 	window->display();
 }

@@ -129,10 +129,14 @@ void *ScriptObject::extractHolder(const Arguments &args)
 	// Extract first internal field from Argument's holder object
 	
 	Local<Object> holderObject = args.Holder();
+	
+	if (holderObject->InternalFieldCount() < 1)
+		throw bit::Exception("No internal fields found in holder object");
+	
 	Local<Value> holderValue = holderObject->GetInternalField(0);
 	
 	if (holderValue.IsEmpty())
-		throw bit::Exception("No internal fields found in holder object");
+		throw bit::Exception("Internal field could not be extracted from object");
 	
 	if (!holderValue->IsExternal())
 		throw bit::Exception("The first field of holder object is not an ExternalObject");

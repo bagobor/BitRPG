@@ -40,7 +40,7 @@ namespace bit
 		 * Runs a multi-line script in the current V8 context
 		 *
 		 * This operation is intended for running .js files loaded
-		 * by the AssetManager.
+		 * by the ContentManager.
 		 */
 		void runScript(const std::string &source);
 		
@@ -76,6 +76,7 @@ namespace bit
 		
 	private:
 		v8::Persistent<v8::Context> context;
+		v8::Isolate *isolate;
 		
 		v8::Persistent<v8::Function> jsonParse;
 		v8::Persistent<v8::Function> jsonStringify;

@@ -31,8 +31,11 @@ namespace bit
 		ContentManagerPtr contentManager;
 		ScriptManagerPtr scriptManager;
 		DisplayManagerPtr displayManager;
-		EventManagerPtr eventManager;
-		StateManagerPtr stateManager;;
+		StateManagerPtr stateManager;
+		
+	private:
+		void registerScriptObjects();
+		void startScriptThread(const std::string &text);
 	};
 }
 

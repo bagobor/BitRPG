@@ -39,6 +39,7 @@ add_executable(BitRPG
 #	ItemObject.cpp
 	
 	ConsoleObject.cpp
+	GameObject.cpp
 	ScriptException.cpp
 	
 	DisplayManager.cpp

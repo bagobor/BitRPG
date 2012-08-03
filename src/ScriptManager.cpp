@@ -11,16 +11,25 @@
 
 #include <v8.h>
 #include <string>
+#include <sstream>
 #include <iostream>
 
 using namespace bit;
 using namespace v8;
-using std::string;
+using namespace std;
 
 
 ScriptManager::ScriptManager()
 {
 	// Init V8
+	
+	V8::Initialize();
+	isolate = Isolate::GetCurrent();
+	
+	if (!isolate)
+		throw bit::Exception("There is no current V8 isolate");
+	
+	// Create context
 	
 	HandleScope handleScope;
 	
@@ -62,6 +71,7 @@ ScriptManager::~ScriptManager()
 
 void ScriptManager::registerObject(ScriptObject *scriptObject, string name)
 {
+	Locker locker(isolate);
 	HandleScope handleScope;
 	
 	Local<Object> global = context->Global();
@@ -75,7 +85,7 @@ void ScriptManager::registerObject(ScriptObject *scriptObject, string name)
 }
 
 
-void ScriptManager::registerConstructor(InvocationCallback constructor, std::string name)
+void ScriptManager::registerConstructor(InvocationCallback constructor, string name)
 {
 	HandleScope handleScope;
 	
@@ -95,6 +105,8 @@ void ScriptManager::registerConstructor(InvocationCallback constructor, std::str
 
 void ScriptManager::runScript(const std::string &source)
 {
+	Locker locker(isolate);
+	//v8::Isolate::Scope isolateScope(isolate);
 	HandleScope handleScope;
 	TryCatch tryCatch;
 	
@@ -103,10 +115,10 @@ void ScriptManager::runScript(const std::string &source)
 	Local<String> sourceString = String::New(source.c_str());
 	Local<Script> script = Script::Compile(sourceString);
 	
-	catchException(tryCatch);
-	
 	if (script.IsEmpty())
 		throw bit::Exception("Script could not compile");
+	
+	catchException(tryCatch);
 	
 	// Run script
 	
@@ -162,6 +174,7 @@ JSONValue ScriptManager::parseJSON(const string &data)
 	if (jsonParse.IsEmpty() || !jsonParse->IsFunction())
 		throw bit::Exception("It seems JSON.parse() has disappeared");
 	
+	Locker locker(isolate);
 	HandleScope handleScope;
 	TryCatch tryCatch;
 	
@@ -176,7 +189,7 @@ JSONValue ScriptManager::parseJSON(const string &data)
 	
 	HandleScope returnScope;
 	Local<Value> rootValue = handleScope.Close(result);
-	return JSONValue(rootValue);
+	return JSONValue(rootValue, isolate);
 }
 
 
@@ -217,6 +230,13 @@ void ScriptManager::catchException(const TryCatch &tryCatch)
 		Local<Message> message = tryCatch.Message();
 		Local<String> messageString = message->Get();
 		String::Utf8Value messageUtf(messageString);
-		throw bit::Exception(*messageUtf);
+		
+		stringstream output;
+		output << *messageUtf << " at ";
+		output << message->GetLineNumber() << ":";
+		output << message->GetEndColumn();
+		
+		std::cerr << output.str() << std::endl;
+		// throw bit::Exception(*messageUtf);
 	}
 }

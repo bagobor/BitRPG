@@ -46,9 +46,10 @@ namespace bit
 		
 	private:
 		friend class ScriptManager;
-		JSONValue(v8::Local<v8::Value> rootValue);
+		JSONValue(v8::Local<v8::Value> rootValue, v8::Isolate *isolate);
 		
 		v8::Persistent<v8::Value> value;
+		v8::Isolate *isolate;
 	};
 }
 

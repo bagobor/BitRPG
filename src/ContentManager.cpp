@@ -72,7 +72,13 @@ TexturePtr ContentManager::loadTexture(const string &filename,
 	// Create new texture from image
 	
 	sf::TexturePtr texture(new Texture);
-	texture->loadFromImage(*image, area);
+	
+	{
+		// Create a new OpenGL context during the image-to-texture conversion
+		
+		Context context;
+		texture->loadFromImage(*image, area);
+	}
 	
 	return texture;
 }

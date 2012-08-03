@@ -17,7 +17,7 @@ namespace bit
 	class StateManager
 	{
 	public:
-		State &getState();
+		StatePtr getState();
 		void changeState(StatePtr newState);
 		
 	private:

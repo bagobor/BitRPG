@@ -11,9 +11,10 @@ using namespace bit;
 using namespace v8;
 
 
-JSONValue::JSONValue(Local<Value> rootValue)
+JSONValue::JSONValue(Local<Value> rootValue, Isolate *isolate)
 {
 	value = Persistent<Value>::New(rootValue);
+	this->isolate = isolate;
 }
 
 
@@ -25,6 +26,7 @@ JSONValue::~JSONValue()
 
 JSONValue JSONValue::operator[](const char *key)
 {
+	Locker locker(isolate);
 	HandleScope handleScope;
 	
 	// Check if value is an object
@@ -44,12 +46,13 @@ JSONValue JSONValue::operator[](const char *key)
 	// Return JSONValue
 	
 	Local<Value> newValue = handleScope.Close(valueObject->Get(keyString));
-	return JSONValue(newValue);
+	return JSONValue(newValue, isolate);
 }
 
 
 JSONValue JSONValue::operator[](int index)
 {
+	Locker locker(isolate);
 	HandleScope handleScope;
 	
 	// Check if value is an array
@@ -71,7 +74,7 @@ JSONValue JSONValue::operator[](int index)
 	// Return JSONValue
 	
 	Local<Value> newValue = valueArray->Get(index);
-	JSONValue jsonValue(newValue);
+	JSONValue jsonValue(newValue, isolate);
 	
 	return jsonValue;
 }
@@ -109,6 +112,7 @@ bool JSONValue::isString()
 
 uint32_t JSONValue::arrayLength()
 {
+	Locker locker(isolate);
 	HandleScope handleScope;
 	
 	Local<Value> valueLocal = Local<Value>::New(value);
@@ -127,6 +131,7 @@ std::string JSONValue::toString()
 	//if (!isString() && !isNumber())
 	//	throw bit::Exception("Value is not a string");
 	
+	Locker locker(isolate);
 	HandleScope handleScope;
 	
 	Local<Value> valueLocal = Local<Value>::New(value);
@@ -139,6 +144,7 @@ std::string JSONValue::toString()
 
 int64_t JSONValue::toInteger()
 {
+	Locker locker(isolate);
 	HandleScope handleScope;
 	
 	// Convert to Integer
@@ -151,6 +157,7 @@ int64_t JSONValue::toInteger()
 
 double JSONValue::toDouble()
 {
+	Locker locker(isolate);
 	HandleScope handleScope;
 	
 	Local<Value> valueLocal = Local<Value>::New(value);
@@ -161,6 +168,7 @@ double JSONValue::toDouble()
 
 bool JSONValue::toBoolean()
 {
+	Locker locker(isolate);
 	HandleScope handleScope;
 	
 	Local<Value> valueLocal = Local<Value>::New(value);

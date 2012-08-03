@@ -8,7 +8,8 @@
 #include "Exception.h"
 
 #include <stdio.h>
-#include <SFML/Window.hpp>
+#include <iostream>
+#include <boost/thread/thread.hpp>
 
 using namespace bit;
 using namespace sf;
@@ -101,7 +102,9 @@ void SplashState::draw(RenderTarget &target, RenderStates states) const
 
 void SplashState::setTexture(TexturePtr texture)
 {
-	splashTexture = texture;
+	// Create the splash texture
+	
+	splashTexture = texture; 
 	
 	// Create the splash sprite
 	

@@ -12,14 +12,14 @@ using namespace bit;
 using namespace boost;
 
 
-State &StateManager::getState()
+StatePtr StateManager::getState()
 {
 	// These locks aren't really needed now, but a clearState() operation
 	// may be added to block the rendering thread.
 	
 	lock_guard<mutex> stateLock(stateMutex);
 	
-	return *currentState;
+	return currentState;
 }
 
 

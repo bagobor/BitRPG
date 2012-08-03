@@ -9,11 +9,11 @@
 #include "ScriptManager.h"
 #include "DisplayManager.h"
 #include "StateManager.h"
-#include "EventManager.h"
-#include "ConsoleObject.h"
 #include "JSONValue.h"
 #include "Exception.h"
 
+#include "ConsoleObject.h"
+#include "GameObject.h"
 #include "SplashState.h"
 
 #include <boost/thread/thread.hpp>
@@ -31,47 +31,72 @@ Application::Application()
 	contentManager.reset(new ContentManager);
 	scriptManager.reset(new ScriptManager);
 	displayManager.reset(new DisplayManager);
-	eventManager.reset(new EventManager);
 	stateManager.reset(new StateManager);
 	
 	// Satisfy component dependencies
 	
-	displayManager->eventManager = eventManager;
 	displayManager->stateManager = stateManager;
-	eventManager->displayManager = displayManager;
 }
 
 
 void Application::start()
 {
-	// Register console object
-	
-	ConsoleObject *consoleObject = new ConsoleObject;
-	scriptManager->registerObject(consoleObject, "console");
-	
 	// Load configuration file
 	
-	string configData = contentManager->loadText("config.json");
-	JSONValue configValue = scriptManager->parseJSON(configData);
+	string configText = contentManager->loadText("config.json");
+	JSONValue configValue = scriptManager->parseJSON(configText);
+	
+	// Start the scripting engine
+	
+	registerScriptObjects();
+	
+	JSONValue scriptingValue = configValue["scripting"];
+	string entryFilename = scriptingValue["entry"].toString();
+	string entryText = contentManager->loadText(entryFilename);
 	
 	// Open the DisplayManager window
 	
 	JSONValue windowValue = configValue["window"];
 	displayManager->openWindow(windowValue);
 	
-	eventManager->window = displayManager->window;
+	// Start the script thread
 	
-	// TEMP Load the splash state
-	
-	boost::shared_ptr<SplashState> splashState(new SplashState);
-	splashState->setFadeTimes(1.0f, 2.0f, 0.5f);
-	splashState->setTexture(contentManager->loadTexture("images/bitrpg.gif"));
-	
-	stateManager->changeState(splashState);
+	boost::thread scriptThread(&Application::startScriptThread,
+		this, entryText);
 	
 	// Run the DisplayManager in the main thread
 	// OS X requires that event checking should be done in the main thread,
 	// so this is the last thing this function should do.
 	
 	displayManager->run();
+}
+
+
+void Application::registerScriptObjects()
+{
+	// console
+	
+	ConsoleObject *consoleObject = new ConsoleObject;
+	scriptManager->registerObject(consoleObject, "console");
+	
+	// game
+	
+	GameObject *gameObject = new GameObject;
+	gameObject->contentManager = contentManager;
+	gameObject->stateManager = stateManager;
+	
+	scriptManager->registerObject(gameObject, "game");
+}
+
+
+void Application::startScriptThread(const string &text)
+{
+	try
+	{
+		scriptManager->runScript(text);
+	}
+	catch (bit::Exception &e)
+	{
+		cout << e.what() << endl;
+	}
 }

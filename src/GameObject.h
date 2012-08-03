@@ -23,11 +23,17 @@ namespace bit
 	public:
 		GameObject();
 		
-		v8::Local<v8::Object> getObject();
+		v8::Local<v8::Object> createInstance();
 		
 		// GameObject specific functions
 		
 		static v8::Handle<v8::Value> loadMap(const v8::Arguments &args);
+		static v8::Handle<v8::Value> splash(const v8::Arguments &args);
+		void splash(const std::string &filename, double fadeIn,
+			double hold, double fadeOut);
+		
+		ContentManagerPtr contentManager;
+		StateManagerPtr stateManager;
 		
 	private:
 		
