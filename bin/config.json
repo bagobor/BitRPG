@@ -1,0 +1,12 @@
+{
+  "window": {
+    "width": 320,
+    "height": 240,
+    "title": "Hello BitRPG",
+    "framerate": 30,
+    "zoom": 2
+  },
+  "scripting": {
+    "entry": "scripts/hello.js"
+  }
+}
