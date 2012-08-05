@@ -40,11 +40,13 @@ add_executable(BitRPG
 	
 	ConsoleObject.cpp
 	GameObject.cpp
+	MapObject.cpp
 	ScriptException.cpp
 	
 	DisplayManager.cpp
 	StateManager.cpp
 	SplashState.cpp
+	MapState.cpp
 #	Entity.cpp
 #	GameObject.cpp
 	JSONValue.cpp

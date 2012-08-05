@@ -17,12 +17,27 @@ namespace bit
 	class StateManager
 	{
 	public:
-		StatePtr getState();
-		void changeState(StatePtr newState);
+		StateManager();
+		
+		enum StateType
+		{
+			BLANKSTATE,
+			SPLASHSTATE,
+			MAPSTATE
+		};
+		
+		void initAllStates(const sf::Vector2u size);
+		void changeState(StateType stateType);
+		
+		StatePtr getCurrentState();
+		SplashStatePtr getSplashState();
+		MapStatePtr getMapState();
 		
 	private:
-		StatePtr currentState;
-		boost::mutex stateMutex;
+		StateType currentStateType;
+		
+		SplashStatePtr splashState;
+		MapStatePtr mapState;
 	};
 }
 

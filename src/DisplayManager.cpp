@@ -10,6 +10,8 @@
 #include "State.h"
 #include "JSONValue.h"
 #include "Exception.h"
+#include "MapState.h"
+#include "MapManager.h"
 
 #include "SplashState.h"
 #include <SFML/Window.hpp>
@@ -64,10 +66,14 @@ void DisplayManager::openWindow(JSONValue &windowObject)
 	
 	// Create window view
 	
-	windowView.reset(new View(window->getView()));
+	windowView.reset(new View(window->getDefaultView()));
 	windowView->setCenter(width / 2.0f, height / 2.0f);
 	windowView->zoom(1.0f / zoom);
 	window->setView(*windowView);
+	
+	// Initialize the MapManager size
+	
+	stateManager->initAllStates(window->getSize());
 }
 
 
@@ -80,15 +86,15 @@ void DisplayManager::closeWindow()
 void DisplayManager::run()
 {
 	if (!window)
-		throw bit::Exception("Window is not opened");
+		throw bit::Exception("Window is not created");
 	
 	// Run the display loop
 	
-	while (window)
+	while (window->isOpen())
 	{
 		// Get the current state
 		
-		StatePtr currentState = stateManager->getState();
+		StatePtr currentState = stateManager->getCurrentState();
 		
 		Event event;
 		
@@ -123,10 +129,11 @@ void DisplayManager::render()
 	
 	// Render window
 	
-	StatePtr currentState = stateManager->getState();
+	StatePtr currentState = stateManager->getCurrentState();
 	
 	if (currentState)
 		window->draw(*currentState);
 	
+	window->setView(*windowView);
 	window->display();
 }

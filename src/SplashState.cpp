@@ -9,7 +9,6 @@
 
 #include <stdio.h>
 #include <iostream>
-#include <boost/thread/thread.hpp>
 
 using namespace bit;
 using namespace sf;
@@ -20,6 +19,8 @@ SplashState::SplashState()
 	fadeIn = 0.0f;
 	hold = 0.0f;
 	fadeOut = 0.0f;
+	
+	fadeTime = 0.0f;
 }
 
 
@@ -67,8 +68,6 @@ void SplashState::advanceFrame(float deltaTime)
 		// The splash state has finished
 		
 		// TODO Finished splash state
-		printf("That's all folks!\n");
-		exit(0);
 		
 		return;
 	}
@@ -104,11 +103,15 @@ void SplashState::setTexture(TexturePtr texture)
 {
 	// Create the splash texture
 	
-	splashTexture = texture; 
+	splashTexture = texture;
 	
 	// Create the splash sprite
 	
 	splashSprite.reset(new Sprite(*splashTexture));
+	
+	// Initialize the fade state
+	
+	fadeTime = 0.0f;
 }
 
 

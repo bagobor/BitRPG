@@ -6,7 +6,7 @@
 
 #include "Exception.h"
 
-#include <assert.h>
+#include <v8.h>
 
 using namespace bit;
 using std::string;
@@ -26,4 +26,11 @@ Exception::Exception(std::string message) throw()
 string Exception::what() const throw()
 {
 	return message;
+}
+
+
+void Exception::throwV8Exception() const throw()
+{
+	v8::Local<v8::String> message = v8::String::New(what().c_str());
+	v8::ThrowException(v8::Exception::Error(message));
 }

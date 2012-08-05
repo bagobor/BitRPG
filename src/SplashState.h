@@ -19,6 +19,7 @@ namespace bit
 	public:
 		SplashState();
 		
+		void init(const sf::Vector2u size) {}
 		void checkEvent(sf::Event &event);
 		void advanceFrame(float deltaTime);
 		void draw(sf::RenderTarget &target, sf::RenderStates states) const;

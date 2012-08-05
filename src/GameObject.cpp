@@ -9,8 +9,9 @@
 #include "SplashState.h"
 #include "ContentManager.h"
 #include "StateManager.h"
+#include "ScriptManager.h"
+#include "JSONValue.h"
 
-#include <boost/thread/thread.hpp>
 #include <string>
 #include <iostream>
 
@@ -45,9 +46,9 @@ Local<Object> GameObject::createInstance()
 	
 	// Add functions to object instance
 	
-	Local<FunctionTemplate> loadMapTemplate = FunctionTemplate::New(loadMap);
-	Local<Function> loadMapFunction = loadMapTemplate->GetFunction();
-	objectInstance->Set(String::New("loadMap"), loadMapFunction);
+	Local<FunctionTemplate> runScriptTemplate = FunctionTemplate::New(runScript);
+	Local<Function> runScriptFunction = runScriptTemplate->GetFunction();
+	objectInstance->Set(String::New("runScript"), runScriptFunction);
 	
 	Local<FunctionTemplate> splashTemplate = FunctionTemplate::New(splash);
 	Local<Function> splashFunction = splashTemplate->GetFunction();
@@ -57,24 +58,16 @@ Local<Object> GameObject::createInstance()
 }
 
 
-Handle<Value> GameObject::loadMap(const v8::Arguments &args)
+Handle<Value> GameObject::runScript(const v8::Arguments &args)
 {
 	// Extract arguments
 	
-	//string mapName;
-	//extractArguments(args, "s", &mapName);
+	string scriptFilename = extractString(args, 0);
+	GameObject *p = static_cast<GameObject *>(extractHolder(args));
 	
-	// Get pointer to GameObject
+	// Call member function
 	
-	//GameObject *gameObject = reinterpret_cast<GameObject *>(getThis(args));
-	
-	// Call member function with given arguments
-	
-	//string mapData = launcher->contentManager->loadFile(mapName + ".json");
-	//JSONValue mapObject = launcher->scriptEngine->parseJSON(mapData);
-	//launcher->displayManager->mapManager->loadMap(mapObject);
-	
-	// Return stuff
+	p->runScript(scriptFilename);
 	
 	return Undefined();
 }
@@ -84,16 +77,29 @@ Handle<Value> GameObject::splash(const v8::Arguments &args)
 {
 	// Extract arguments
 	
-	GameObject *p = static_cast<GameObject *>(extractHolder(args));
-	
 	string splashFilename = extractString(args, 0);
 	double fadeIn = extractDouble(args, 1);
 	double hold = extractDouble(args, 2);
 	double fadeOut = extractDouble(args, 3);
+	GameObject *p = static_cast<GameObject *>(extractHolder(args));
+	
+	// Call member function
 	
 	p->splash(splashFilename, fadeIn, hold, fadeOut);
 	
 	return Undefined();
+}
+
+
+void GameObject::runScript(const string &filename)
+{
+	// Load the script from the file
+	
+	string scriptText = contentManager->loadText(filename);
+	
+	// Run the script, blocking the current script
+	
+	scriptManager->runScript(scriptText);
 }
 
 
@@ -102,10 +108,11 @@ void GameObject::splash(const string &filename, double fadeIn,
 {
 	// Create the splash state
 	
-	boost::shared_ptr<SplashState> splashState(new SplashState);
-	sf::TexturePtr splashTexture = contentManager->loadTexture(filename);
+	SplashStatePtr splashState = stateManager->getSplashState();
 	
+	sf::TexturePtr splashTexture = contentManager->loadTexture(filename);
 	splashState->setTexture(splashTexture);
 	splashState->setFadeTimes(fadeIn, hold, fadeOut);
-	stateManager->changeState(splashState);
+	
+	stateManager->changeState(StateManager::SPLASHSTATE);
 }

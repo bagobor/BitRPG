@@ -22,18 +22,18 @@ MapManager::MapManager()
 }
 
 
-void MapManager::initSize(int width, int height)
+void MapManager::initSize(int pixelWidth, int pixelHeight)
 {
 	// Create the map view
 	
 	mapView.reset(new View);
-	mapView->setSize(width, height);
-	mapView->setCenter(0.0f, 0.0f);
+	mapView->setSize(pixelWidth, pixelHeight);
+	mapView->setCenter(200.0f, 200.0f);
 	
 	// Create the map texture
 	
 	mapTexture.reset(new RenderTexture);
-	mapTexture->create(width, height);
+	mapTexture->create(pixelWidth, pixelHeight);
 	mapTexture->setView(*mapView);
 	
 	// Create the map sprite
@@ -97,24 +97,15 @@ void MapManager::draw(RenderTarget &target, RenderStates states) const
 {
 	mapTexture->clear();
 	
-	// Draw entities and tiles onto the map texture
+	// Draw all the sprites ordered by their z-order, ascending
 	
-	/*
-	for (std::multimap<int, EntityPtr>::const_iterator entityIt =
-		 entities.begin(); entityIt != entities.end(); entityIt++)
+	for (std::multimap<int, boost::weak_ptr<Sprite> >::const_iterator spriteIt =
+		sprites.begin(); spriteIt != sprites.end(); spriteIt++)
 	{
-		// Draw entity
+		boost::shared_ptr<Sprite> sprite = spriteIt->second.lock();
 		
-		target.draw(*entityIt->second);
-	}
-	*/
-	
-	// Draw the tile sprites
-	
-	for (std::multimap<int, SpritePtr>::const_iterator layerIt =
-			layerSprites.begin(); layerIt != layerSprites.end(); layerIt++)
-	{
-		mapTexture->draw(*layerIt->second);
+		if (sprite)
+			mapTexture->draw(*sprite);
 	}
 	
 	// Draw the map sprite onto the window
@@ -145,6 +136,7 @@ void MapManager::loadTileset(JSONValue &tilesetObject)
 	// Extract most of the JSONValue data
 	
 	std::string imageFilename = tilesetObject["image"].toString();
+	
 	ImagePtr image = contentManager->loadImage(imageFilename);
 	
 	std::string name = tilesetObject["name"].toString();
@@ -250,7 +242,10 @@ void MapManager::loadLayer(JSONValue &layerObject, int zOrder)
 		
 		// Put the sprite in the layerSprites map
 		
-		layerSprites.insert(std::pair<int, SpritePtr>(zOrder, tileSprite));
+		tileSprites.push_back(tileSprite);
+		
+		sprites.insert(std::pair<int, boost::weak_ptr<Sprite> >
+			(zOrder, boost::weak_ptr<Sprite>(tileSprite)));
 	}
 }
 

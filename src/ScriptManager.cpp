@@ -130,6 +130,7 @@ void ScriptManager::runScript(const std::string &source)
 
 string ScriptManager::evaluate(const string &statement)
 {
+	Locker locker(isolate);
 	HandleScope handleScope;
 	TryCatch tryCatch;
 	
@@ -236,7 +237,7 @@ void ScriptManager::catchException(const TryCatch &tryCatch)
 		output << message->GetLineNumber() << ":";
 		output << message->GetEndColumn();
 		
-		std::cerr << output.str() << std::endl;
-		// throw bit::Exception(*messageUtf);
+		// std::cerr << output.str() << std::endl;
+		throw bit::Exception(*messageUtf);
 	}
 }

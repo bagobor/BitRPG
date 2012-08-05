@@ -5,27 +5,62 @@
  */
 
 #include "StateManager.h"
-
-#include <boost/thread/locks.hpp>
+#include "SplashState.h"
+#include "MapState.h"
 
 using namespace bit;
-using namespace boost;
 
 
-StatePtr StateManager::getState()
+StateManager::StateManager()
 {
-	// These locks aren't really needed now, but a clearState() operation
-	// may be added to block the rendering thread.
+	splashState.reset(new SplashState);
+	mapState.reset(new MapState);
 	
-	lock_guard<mutex> stateLock(stateMutex);
+	// Initialize the default state
 	
-	return currentState;
+	currentStateType = BLANKSTATE;
 }
 
 
-void StateManager::changeState(StatePtr newState)
+void StateManager::initAllStates(const sf::Vector2u size)
 {
-	lock_guard<mutex> stateLock(stateMutex);
+	splashState->init(size);
+	mapState->init(size);
+}
+
+
+void StateManager::changeState(StateType stateType)
+{
+	currentStateType = stateType;
+}
+
+
+StatePtr StateManager::getCurrentState()
+{
+	switch (currentStateType)
+	{
+	case BLANKSTATE:
+		return StatePtr();
+	break;
 	
-	currentState = newState;
+	case SPLASHSTATE:
+		return splashState;
+	break;
+	
+	case MAPSTATE:
+		return mapState;
+	break;
+	}
+}
+
+
+SplashStatePtr StateManager::getSplashState()
+{
+	return splashState;
+}
+
+
+MapStatePtr StateManager::getMapState()
+{
+	return mapState;
 }

@@ -10,10 +10,11 @@
 #include "BitRPG.h"
 #include "JSONValue.h"
 
+#include <boost/weak_ptr.hpp>
 #include <SFML/Graphics.hpp>
 #include <map>
+#include <vector>
 
-class Entity;
 class MapTile;
 
 
@@ -24,7 +25,7 @@ namespace bit
 	public:
 		MapManager();
 		
-		void initSize(int width, int height);
+		void initSize(int pixelWidth, int pixelHeight);
 		void loadMap(JSONValue &mapObject);
 		
 		void draw(sf::RenderTarget &target, sf::RenderStates states) const;
@@ -44,7 +45,6 @@ namespace bit
 		bool isWall(int x, int y);
 		
 		ContentManagerPtr contentManager;
-		MapManagerPtr mapManager;
 		
 	private:
 		void loadTileset(JSONValue &tilesetObject);
@@ -57,11 +57,11 @@ namespace bit
 		
 		// Drawable objects
 		
-		// <z-order, entity>
-		std::multimap<int, EntityPtr> entities;
+		// TEMP
+		std::vector<sf::SpritePtr> tileSprites;
 		
-		// <z-order, tileSprite>
-		std::multimap<int, sf::SpritePtr> layerSprites;
+		// <z-order, sprite>
+		std::multimap<int, boost::weak_ptr<sf::Sprite> > sprites;
 		
 		// <gid, mapTile>
 		std::multimap<int, MapTilePtr> tiles;

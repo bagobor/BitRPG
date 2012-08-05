@@ -7,7 +7,6 @@
 #include "Application.h"
 #include "Exception.h"
 
-#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>
 

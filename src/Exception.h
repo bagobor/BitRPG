@@ -19,6 +19,7 @@ namespace bit
 		Exception(std::string message) throw();
 		
 		std::string what() const throw();
+		void throwV8Exception() const throw();
 		
 	private:
 		std::string message;

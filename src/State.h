@@ -16,6 +16,11 @@ namespace bit
 	{
 	public:
 		/**
+		 * Initializes the state with the size of the RenderWindow
+		 */
+		virtual void init(const sf::Vector2u size) {}
+		
+		/**
 		 * Handles an SFML input event caught from the current window
 		 */
 		virtual void checkEvent(sf::Event &event) {}

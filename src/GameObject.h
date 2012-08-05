@@ -10,10 +10,7 @@
 #include "BitRPG.h"
 #include "ScriptObject.h"
 
-#include <boost/shared_ptr.hpp>
 #include <v8.h>
-
-class Launcher;
 
 
 namespace bit
@@ -27,13 +24,22 @@ namespace bit
 		
 		// GameObject specific functions
 		
-		static v8::Handle<v8::Value> loadMap(const v8::Arguments &args);
+		/**
+		 * Blocks the currently running script to run another script
+		 * 
+		 * Once the script is finished, the script calling this function
+		 * resumes.
+		 */
+		static v8::Handle<v8::Value> runScript(const v8::Arguments &args);
 		static v8::Handle<v8::Value> splash(const v8::Arguments &args);
+		
+		void runScript(const std::string &filename);
 		void splash(const std::string &filename, double fadeIn,
 			double hold, double fadeOut);
 		
 		ContentManagerPtr contentManager;
 		StateManagerPtr stateManager;
+		ScriptManagerPtr scriptManager;
 		
 	private:
 		

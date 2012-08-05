@@ -27,6 +27,8 @@ namespace bit
 	class ScriptObject;
 	class ScriptClass;
 	class State;
+	class SplashState;
+	class MapState;
 	
 	typedef boost::shared_ptr<Application> ApplicationPtr;
 	typedef boost::shared_ptr<ContentManager> ContentManagerPtr;
@@ -39,6 +41,8 @@ namespace bit
 	typedef boost::shared_ptr<MapLayer> MapLayerPtr;
 	typedef boost::shared_ptr<MapTile> MapTilePtr;
 	typedef boost::shared_ptr<State> StatePtr;
+	typedef boost::shared_ptr<SplashState> SplashStatePtr;
+	typedef boost::shared_ptr<MapState> MapStatePtr;
 }
 
 

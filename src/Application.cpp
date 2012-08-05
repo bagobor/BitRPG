@@ -11,10 +11,12 @@
 #include "StateManager.h"
 #include "JSONValue.h"
 #include "Exception.h"
+#include "MapState.h"
+#include "ScriptException.h"
 
 #include "ConsoleObject.h"
 #include "GameObject.h"
-#include "SplashState.h"
+#include "MapObject.h"
 
 #include <boost/thread/thread.hpp>
 #include <string>
@@ -36,6 +38,7 @@ Application::Application()
 	// Satisfy component dependencies
 	
 	displayManager->stateManager = stateManager;
+	stateManager->getMapState()->contentManager = contentManager;
 }
 
 
@@ -84,13 +87,23 @@ void Application::registerScriptObjects()
 	GameObject *gameObject = new GameObject;
 	gameObject->contentManager = contentManager;
 	gameObject->stateManager = stateManager;
-	
+	gameObject->scriptManager = scriptManager;
 	scriptManager->registerObject(gameObject, "game");
+	
+	// map
+	
+	MapObject *mapObject = new MapObject;
+	mapObject->contentManager = contentManager;
+	mapObject->scriptManager = scriptManager;
+	mapObject->stateManager = stateManager;
+	scriptManager->registerObject(mapObject, "map");
 }
 
 
 void Application::startScriptThread(const string &text)
 {
+	// Run the requested script
+	
 	try
 	{
 		scriptManager->runScript(text);
@@ -98,5 +111,26 @@ void Application::startScriptThread(const string &text)
 	catch (bit::Exception &e)
 	{
 		cout << e.what() << endl;
+	}
+	
+	// Once that's complete, just offer a console for further commands
+	
+	string statement;
+	
+	while (true)
+	{
+		try
+		{
+			cout << "> ";
+			getline(cin, statement);
+			string output = scriptManager->evaluate(statement);
+			
+			if (output != "")
+				cout << output << endl;
+		}
+		catch (Exception &e)
+		{
+			cout << "Exception: " << e.what() << endl;
+		}
 	}
 }
