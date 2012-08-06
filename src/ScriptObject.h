@@ -39,9 +39,14 @@ namespace bit
 		 */
 		static void *extractHolder(const v8::Arguments &args);
 		
+		static v8::Local<v8::FunctionTemplate> createClass(
+			const std::string &name);
+		static void addPrototypeMethod(v8::Handle<v8::ObjectTemplate> prototypeTemplate,
+			v8::InvocationCallback callback, const std::string &name);
+		
 	private:
-		static v8::Handle<v8::Value> extractArgument(
-			const v8::Arguments &args, int index);
+		static v8::Handle<v8::Value> extractArgument(const v8::Arguments &args,
+			int index);
 	};
 }
 

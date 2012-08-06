@@ -115,15 +115,19 @@ void Application::startScriptThread(const string &text)
 	
 	// Once that's complete, just offer a console for further commands
 	
-	string statement;
+	string input;
 	
 	while (true)
 	{
 		try
 		{
 			cout << "> ";
-			getline(cin, statement);
-			string output = scriptManager->evaluate(statement);
+			getline(cin, input);
+			
+			if (input == "")
+				break;
+			
+			string output = scriptManager->evaluate(input);
 			
 			if (output != "")
 				cout << output << endl;
@@ -133,4 +137,6 @@ void Application::startScriptThread(const string &text)
 			cout << "Exception: " << e.what() << endl;
 		}
 	}
+	
+	cout << "Script thread finished" << endl;
 }

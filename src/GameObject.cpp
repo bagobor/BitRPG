@@ -29,10 +29,13 @@ Local<Object> GameObject::createInstance()
 {
 	HandleScope handleScope;
 	
-	// Create the function template
+	Local<FunctionTemplate> functionTemplate = createClass("Game");
+	Local<ObjectTemplate> prototypeTemplate = functionTemplate->PrototypeTemplate();
 	
-	Local<FunctionTemplate> functionTemplate = FunctionTemplate::New();
-	functionTemplate->SetClassName(String::New("Game"));
+	// Create the methods
+	
+	addPrototypeMethod(prototypeTemplate, runScript, "runScript");
+	addPrototypeMethod(prototypeTemplate, splash, "splash");
 	
 	// Create the object template
 	
@@ -43,16 +46,6 @@ Local<Object> GameObject::createInstance()
 	
 	Local<Object> objectInstance = objectTemplate->NewInstance();
 	objectInstance->SetInternalField(0, External::New(this));
-	
-	// Add functions to object instance
-	
-	Local<FunctionTemplate> runScriptTemplate = FunctionTemplate::New(runScript);
-	Local<Function> runScriptFunction = runScriptTemplate->GetFunction();
-	objectInstance->Set(String::New("runScript"), runScriptFunction);
-	
-	Local<FunctionTemplate> splashTemplate = FunctionTemplate::New(splash);
-	Local<Function> splashFunction = splashTemplate->GetFunction();
-	objectInstance->Set(String::New("splash"), splashFunction);
 	
 	return handleScope.Close(objectInstance);
 }

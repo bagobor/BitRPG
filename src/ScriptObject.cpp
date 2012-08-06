@@ -108,20 +108,6 @@ string ScriptObject::extractString(const Arguments &args, int index)
 }
 
 
-Handle<Value> ScriptObject::extractArgument(const Arguments &args, int index)
-{
-	if (index >= args.Length())
-	{
-		Local<String> message = String::New("Argument index out of bounds");
-		throw ScriptException(v8::Exception::SyntaxError(message));
-	}
-	
-	// Get value
-	
-	return args[index];
-}
-
-
 void *ScriptObject::extractHolder(const Arguments &args)
 {
 	HandleScope handleScope;
@@ -149,4 +135,37 @@ void *ScriptObject::extractHolder(const Arguments &args)
 		throw bit::Exception("Extracted pointer is null");
 	
 	return holderPointer;
+}
+
+
+Local<FunctionTemplate> ScriptObject::createClass(const std::string &name)
+{
+	HandleScope handleScope;
+	
+	Local<FunctionTemplate> functionTemplate = FunctionTemplate::New();
+	functionTemplate->SetClassName(String::New(name.c_str()));
+	
+	return handleScope.Close(functionTemplate);
+}
+
+
+void ScriptObject::addPrototypeMethod(Handle<ObjectTemplate> prototypeTemplate,
+	InvocationCallback callback, const string &name)
+{
+	Local<FunctionTemplate> functionTemplate = FunctionTemplate::New(callback);
+	prototypeTemplate->Set(String::NewSymbol(name.c_str()), functionTemplate);
+}
+
+
+Handle<Value> ScriptObject::extractArgument(const Arguments &args, int index)
+{
+	if (index >= args.Length())
+	{
+		Local<String> message = String::New("Argument index out of bounds");
+		throw ScriptException(v8::Exception::SyntaxError(message));
+	}
+	
+	// Get value
+	
+	return args[index];
 }

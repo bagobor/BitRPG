@@ -18,10 +18,13 @@ Local<Object> ConsoleObject::createInstance()
 {
 	HandleScope handleScope;
 	
-	// Create the function template
+	Local<FunctionTemplate> functionTemplate = createClass("Console");
+	Local<ObjectTemplate> prototypeTemplate = functionTemplate->PrototypeTemplate();
 	
-	Local<FunctionTemplate> functionTemplate = FunctionTemplate::New();
-	functionTemplate->SetClassName(String::New("Console"));
+	// Add the methods
+	
+	addPrototypeMethod(prototypeTemplate, print, "print");
+	addPrototypeMethod(prototypeTemplate, input, "input");
 	
 	// Create the object template
 	
@@ -33,16 +36,6 @@ Local<Object> ConsoleObject::createInstance()
 	Local<Object> objectInstance = objectTemplate->NewInstance();
 	objectInstance->SetInternalField(0, External::New(this));
 	
-	// Add functions to object instance
-	
-	Local<FunctionTemplate> printTemplate = FunctionTemplate::New(print);
-	Local<Function> printFunction = printTemplate->GetFunction();
-	objectInstance->Set(String::New("print"), printFunction);
-	
-	Local<FunctionTemplate> inputTemplate = FunctionTemplate::New(input);
-	Local<Function> inputFunction = inputTemplate->GetFunction();
-	objectInstance->Set(String::New("input"), inputFunction);
-	
 	return handleScope.Close(objectInstance);
 }
 
@@ -51,20 +44,18 @@ Handle<Value> ConsoleObject::print(const Arguments &args)
 {
 	HandleScope handleScope;
 	
-	string message;
-	
 	try
 	{
-		message = ScriptObject::extractString(args, 0);
+		string message = ScriptObject::extractString(args, 0);
+		
+		// Print the string with a newline at the end
+		
+		cout << message << endl;
 	}
 	catch (ScriptException &e)
 	{
 		return e.getException();
 	}
-	
-	// Print the string with a newline at the end
-	
-	cout << message << endl;
 	
 	return Undefined();
 }

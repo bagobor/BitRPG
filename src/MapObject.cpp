@@ -27,10 +27,13 @@ Local<Object> MapObject::createInstance()
 {
 	HandleScope handleScope;
 	
-	// Create the function template
+	Local<FunctionTemplate> functionTemplate = createClass("Map");
+	Local<ObjectTemplate> prototypeTemplate = functionTemplate->PrototypeTemplate();
 	
-	Local<FunctionTemplate> functionTemplate = FunctionTemplate::New();
-	functionTemplate->SetClassName(String::New("Map"));
+	// Add the methods
+	
+	addPrototypeMethod(prototypeTemplate, load, "load");
+	addPrototypeMethod(prototypeTemplate, show, "show");
 	
 	// Create the object template
 	
@@ -42,46 +45,30 @@ Local<Object> MapObject::createInstance()
 	Local<Object> objectInstance = objectTemplate->NewInstance();
 	objectInstance->SetInternalField(0, External::New(this));
 	
-	// Add functions to object instance
-	
-	Local<FunctionTemplate> loadTemplate = FunctionTemplate::New(load);
-	Local<Function> loadFunction = loadTemplate->GetFunction();
-	objectInstance->Set(String::New("load"), loadFunction);
-	
-	Local<FunctionTemplate> showTemplate = FunctionTemplate::New(show);
-	Local<Function> showFunction = showTemplate->GetFunction();
-	objectInstance->Set(String::New("show"), showFunction);
-	
 	return handleScope.Close(objectInstance);
 }
 
 
 Handle<Value> MapObject::load(const v8::Arguments &args)
 {
-	string mapFilename;
-	MapObject *p = NULL;
-	
 	try
 	{
 		// Extract arguments
 		
-		mapFilename = extractString(args, 0);
-		p = static_cast<MapObject *>(extractHolder(args));
-	}
-	catch (ScriptException &e)
-	{
-		return e.getException();
-	}
-	
-	// Call member function
-	
-	try
-	{
+		string mapFilename = extractString(args, 0);
+		MapObject *p = static_cast<MapObject *>(extractHolder(args));
+		
+		// Call member function
+		
 		p->loadMap(mapFilename);
 	}
 	catch (Exception &e)
 	{
 		e.throwV8Exception();
+	}
+	catch (ScriptException &e)
+	{
+		return e.getException();
 	}
 	
 	return Undefined();
@@ -90,13 +77,20 @@ Handle<Value> MapObject::load(const v8::Arguments &args)
 
 Handle<Value> MapObject::show(const v8::Arguments &args)
 {
-	// Extract arguments
-	
-	MapObject *p = static_cast<MapObject *>(extractHolder(args));
-	
-	// Call member function
-	
-	p->show();
+	try
+	{
+		// Extract arguments
+		
+		MapObject *p = static_cast<MapObject *>(extractHolder(args));
+		
+		// Call member function
+		
+		p->show();
+	}
+	catch (ScriptException &e)
+	{
+		return e.getException();
+	}
 	
 	return Undefined();
 }
