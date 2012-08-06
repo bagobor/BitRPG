@@ -1,11 +1,10 @@
 
 # SFML library
 
-#set(SFML_STATIC_LIBRARIES TRUE)
+set(SFML_STATIC_LIBRARIES TRUE)
 find_package(SFML 2 COMPONENTS system window graphics REQUIRED)
 
 include_directories(${SFML_INCLUDE_DIR})
-#link_directories(${SFML_LIBRARIES})
 
 
 # V8 library
@@ -13,7 +12,6 @@ include_directories(${SFML_INCLUDE_DIR})
 find_package(V8 REQUIRED)
 
 include_directories(${V8_INCLUDE_DIR})
-#link_directories(${V8_LIBRARIES})
 
 
 # Boost library
@@ -34,27 +32,24 @@ add_executable(BitRPG
 	Application.cpp
 	ContentManager.cpp
 	
+	ScriptException.cpp
 	ScriptManager.cpp
+	JSONValue.cpp
 	ScriptObject.cpp
-#	ItemObject.cpp
-	
 	ConsoleObject.cpp
 	GameObject.cpp
 	MapObject.cpp
-	ScriptException.cpp
 	
 	DisplayManager.cpp
 	StateManager.cpp
 	SplashState.cpp
 	MapState.cpp
-#	Entity.cpp
-#	GameObject.cpp
-	JSONValue.cpp
-#	MapLayer.cpp
 	MapManager.cpp
 )
 
 
-target_link_libraries(BitRPG ${SFML_LIBRARIES})
-target_link_libraries(BitRPG ${V8_LIBRARIES})
-target_link_libraries(BitRPG ${Boost_LIBRARIES})
+target_link_libraries(BitRPG
+	${SFML_LIBRARIES}
+	${V8_LIBRARIES}
+	${Boost_LIBRARIES}
+)
