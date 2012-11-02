@@ -7,14 +7,20 @@
 #ifndef BitRPG_GameObject_h
 #define BitRPG_GameObject_h
 
-#include "BitRPG.h"
-#include "ScriptObject.h"
+#include "../ScriptObject.h"
 
 #include <v8.h>
+#include <boost/smart_ptr.hpp>
+
+using boost::shared_ptr;
 
 
 namespace bit
 {
+	class ContentManager;
+	class StateManager;
+	class ScriptManager;
+	
 	class GameObject : public ScriptObject
 	{
 	public:
@@ -37,12 +43,11 @@ namespace bit
 		void splash(const std::string &filename, double fadeIn,
 			double hold, double fadeOut);
 		
-		ContentManagerPtr contentManager;
-		StateManagerPtr stateManager;
-		ScriptManagerPtr scriptManager;
+		shared_ptr<ContentManager> contentManager;
+		shared_ptr<StateManager> stateManager;
+		shared_ptr<ScriptManager> scriptManager;
 		
 	private:
-		
 	};
 }
 

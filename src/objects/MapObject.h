@@ -7,15 +7,21 @@
 #ifndef BitRPG_MapObject_h
 #define BitRPG_MapObject_h
 
-#include "BitRPG.h"
-#include "ScriptObject.h"
+#include "../ScriptObject.h"
 
 #include <v8.h>
 #include <string>
+#include <boost/smart_ptr.hpp>
+
+using boost::shared_ptr;
 
 
 namespace bit
 {
+	class ContentManager;
+	class ScriptManager;
+	class StateManager;
+	
 	class MapObject : public ScriptObject
 	{
 	public:
@@ -31,12 +37,11 @@ namespace bit
 		void loadMap(const std::string &filename);
 		void show();
 		
-		ContentManagerPtr contentManager;
-		ScriptManagerPtr scriptManager;
-		StateManagerPtr stateManager;
+		shared_ptr<ContentManager> contentManager;
+		shared_ptr<ScriptManager> scriptManager;
+		shared_ptr<StateManager> stateManager;
 		
 	private:
-		
 	};
 }
 

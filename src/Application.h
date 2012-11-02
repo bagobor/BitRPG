@@ -7,11 +7,19 @@
 #ifndef BitRPG_Application_h
 #define BitRPG_Application_h
 
-#include "BitRPG.h"
+#include <string>
+#include <boost/shared_ptr.hpp>
+
+using boost::shared_ptr;
 
 
 namespace bit
 {
+	class ContentManager;
+	class ScriptManager;
+	class DisplayManager;
+	class StateManager;
+	
 	/**
 	 * Initializes all components needed to launch the game
 	 */
@@ -28,10 +36,10 @@ namespace bit
 		 */
 		void start();
 		
-		ContentManagerPtr contentManager;
-		ScriptManagerPtr scriptManager;
-		DisplayManagerPtr displayManager;
-		StateManagerPtr stateManager;
+		shared_ptr<ContentManager> contentManager;
+		shared_ptr<ScriptManager> scriptManager;
+		shared_ptr<DisplayManager> displayManager;
+		shared_ptr<StateManager> stateManager;
 		
 	private:
 		void registerScriptObjects();

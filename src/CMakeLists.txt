@@ -1,8 +1,8 @@
 
 # SFML library
 
-set(SFML_STATIC_LIBRARIES TRUE)
-find_package(SFML 2 COMPONENTS system window graphics REQUIRED)
+#set(SFML_STATIC_LIBRARIES TRUE)
+find_package(SFML 2 COMPONENTS system window graphics audio REQUIRED)
 
 include_directories(${SFML_INCLUDE_DIR})
 
@@ -36,15 +36,19 @@ add_executable(BitRPG
 	ScriptManager.cpp
 	JSONValue.cpp
 	ScriptObject.cpp
-	ConsoleObject.cpp
-	GameObject.cpp
-	MapObject.cpp
+	objects/ConsoleObject.cpp
+	objects/GameObject.cpp
+	objects/MapObject.cpp
+	objects/EntityObject.cpp
+	objects/AudioObject.cpp
 	
 	DisplayManager.cpp
 	StateManager.cpp
 	SplashState.cpp
 	MapState.cpp
 	MapManager.cpp
+	
+	Entity.cpp
 )
 
 

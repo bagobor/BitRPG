@@ -12,6 +12,11 @@
 
 namespace bit
 {
+	/**
+	 * Whenever a ScriptException is thrown, it is the fault
+	 * of the JavaScript code and should be ultimately caught
+	 * in a JavaScript try block.
+	 */
 	class ScriptException
 	{
 	public:

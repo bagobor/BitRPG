@@ -5,7 +5,7 @@
  */
 
 #include "ItemObject.h"
-#include "ScriptException.h"
+#include "../ScriptException.h"
 
 #include <v8.h>
 

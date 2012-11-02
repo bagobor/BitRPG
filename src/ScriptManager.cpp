@@ -24,19 +24,33 @@ ScriptManager::ScriptManager()
 	// Init V8
 	
 	V8::Initialize();
-	isolate = Isolate::GetCurrent();
+	// Locker::StartPreemption(10);
 	
-	if (!isolate)
-		throw bit::Exception("There is no current V8 isolate");
+	mainIsolate = Isolate::New();
+	
+	if (!mainIsolate)
+		throw bit::Exception("V8 isolate could not be created");
 	
 	// Create context
 	
+	Locker locker(mainIsolate);
+	Isolate::Scope isolateScope(mainIsolate);
 	HandleScope handleScope;
 	
-	context = Context::New();
-	context->Enter();
+	mainContext = Context::New();
+	mainContext->Enter();
 	
-	Local<Object> global = context->Global();
+	initializeJSON();
+}
+
+
+void ScriptManager::initializeJSON()
+{
+	Locker locker(mainIsolate);
+	Isolate::Scope isolateScope(mainIsolate);
+	HandleScope handleScope;
+	
+	Local<Object> global = mainContext->Global();
 	
 	// Grab the JSON.parse() function
 	
@@ -53,10 +67,6 @@ ScriptManager::ScriptManager()
 	Local<Value> stringifyValue = JSONObject->Get(String::New("stringify"));
 	Local<Function> stringifyFunction = Local<Function>::Cast(stringifyValue);
 	jsonStringify = Persistent<Function>::New(stringifyFunction);
-	
-	// The global scope isn't being modified, so we'll comment this out
-	
-	//context->ReattachGlobal(global);
 }
 
 
@@ -65,28 +75,29 @@ ScriptManager::~ScriptManager()
 	jsonParse.Dispose();
 	jsonStringify.Dispose();
 	
-	context.Dispose();
+	mainContext.Dispose();
 }
 
 
 void ScriptManager::registerObject(ScriptObject *scriptObject, string name)
 {
-	Locker locker(isolate);
+	Locker locker(mainIsolate);
+	Isolate::Scope isolateScope(mainIsolate);
 	HandleScope handleScope;
 	
-	Local<Object> global = context->Global();
+	Local<Object> global = mainContext->Global();
 	
 	// Make the object a global in the V8 context
 	
 	Local<Object> obj = scriptObject->createInstance();
 	global->Set(String::New(name.c_str()), obj);
-	
-	context->ReattachGlobal(global);
 }
 
 
 void ScriptManager::registerConstructor(InvocationCallback constructor, string name)
 {
+	Locker locker(mainIsolate);
+	Isolate::Scope isolateScope(mainIsolate);
 	HandleScope handleScope;
 	
 	// Create a V8 function from the constructor callback function
@@ -96,17 +107,16 @@ void ScriptManager::registerConstructor(InvocationCallback constructor, string n
 	
 	// Make the constructor function a global
 	
-	Local<Object> global = context->Global();
+	Local<Object> global = mainContext->Global();
 	
 	global->Set(String::New(name.c_str()), constructorFunction);
-	context->ReattachGlobal(global);
 }
 
 
 void ScriptManager::runScript(const std::string &source)
 {
-	Locker locker(isolate);
-	//v8::Isolate::Scope isolateScope(isolate);
+	Locker locker(mainIsolate);
+	Isolate::Scope isolateScope(mainIsolate);
 	HandleScope handleScope;
 	TryCatch tryCatch;
 	
@@ -130,7 +140,8 @@ void ScriptManager::runScript(const std::string &source)
 
 string ScriptManager::evaluate(const string &statement)
 {
-	Locker locker(isolate);
+	Locker locker(mainIsolate);
+	Isolate::Scope isolateScope(mainIsolate);
 	HandleScope handleScope;
 	TryCatch tryCatch;
 	
@@ -158,9 +169,8 @@ string ScriptManager::evaluate(const string &statement)
 	{
 		// Assign result value to "_" global variable
 		
-		Handle<Object> globalObject = context->Global();
+		Handle<Object> globalObject = mainContext->Global();
 		globalObject->Set(String::New("_"), result);
-		context->ReattachGlobal(globalObject);
 		
 		// Return value as string
 		
@@ -175,14 +185,15 @@ JSONValue ScriptManager::parseJSON(const string &data)
 	if (jsonParse.IsEmpty() || !jsonParse->IsFunction())
 		throw bit::Exception("It seems JSON.parse() has disappeared");
 	
-	Locker locker(isolate);
+	Locker locker(mainIsolate);
+	Isolate::Scope isolateScope(mainIsolate);
 	HandleScope handleScope;
 	TryCatch tryCatch;
 	
 	// Call the JSON.parse() function
 	
 	Handle<Value> args[] = { String::New(data.c_str()) };
-	Local<Value> result = jsonParse->Call(context->Global(), 1, args);
+	Local<Value> result = jsonParse->Call(mainContext->Global(), 1, args);
 	
 	catchException(tryCatch);
 	
@@ -190,12 +201,14 @@ JSONValue ScriptManager::parseJSON(const string &data)
 	
 	HandleScope returnScope;
 	Local<Value> rootValue = handleScope.Close(result);
-	return JSONValue(rootValue, isolate);
+	return JSONValue(rootValue, mainIsolate);
 }
 
 
 string ScriptManager::toJSON(const JSONValue &value, bool pretty)
 {
+	Locker locker(mainIsolate);
+	Isolate::Scope isolateScope(mainIsolate);
 	HandleScope handleScope;
 	TryCatch tryCatch;
 	
@@ -206,7 +219,7 @@ string ScriptManager::toJSON(const JSONValue &value, bool pretty)
 	// Call the JSON.stringify() function
 	
 	Handle<Value> args[] = { value.value, Undefined(), spaceArg };
-	Local<Value> resultValue = jsonStringify->Call(context->Global(), 3, args);
+	Local<Value> resultValue = jsonStringify->Call(mainContext->Global(), 3, args);
 	
 	catchException(tryCatch);
 	

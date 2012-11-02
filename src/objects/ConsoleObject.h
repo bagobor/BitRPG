@@ -7,8 +7,7 @@
 #ifndef BitRPG_ConsoleObject_h
 #define BitRPG_ConsoleObject_h
 
-#include "BitRPG.h"
-#include "ScriptObject.h"
+#include "../ScriptObject.h"
 
 
 namespace bit
@@ -18,7 +17,7 @@ namespace bit
 	public:
 		v8::Local<v8::Object> createInstance();
 		
-		static v8::Handle<v8::Value> print(const v8::Arguments &args);
+		static v8::Handle<v8::Value> log(const v8::Arguments &args);
 		static v8::Handle<v8::Value> input(const v8::Arguments &args);
 	};
 }

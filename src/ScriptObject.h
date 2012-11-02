@@ -13,6 +13,9 @@
 
 namespace bit
 {
+	/**
+	 * Represents a general class defined in the scripting environment
+	 */
 	class ScriptObject
 	{
 	public:

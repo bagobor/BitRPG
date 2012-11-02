@@ -7,13 +7,18 @@
 #ifndef BitRPG_DisplayManager_h
 #define BitRPG_DisplayManager_h
 
-#include "BitRPG.h"
-
 #include <SFML/Graphics.hpp>
+#include <boost/shared_ptr.hpp>
+
+using boost::shared_ptr;
 
 
 namespace bit
 {
+	class EventManager;
+	class StateManager;
+	class JSONValue;
+	
 	/**
 	 * Manages the window and final graphics rendering of the game
 	 */
@@ -21,6 +26,7 @@ namespace bit
 	{
 	public:
 		DisplayManager();
+		~DisplayManager();
 		
 		/**
 		 * Opens a window with the given window configuration
@@ -29,9 +35,9 @@ namespace bit
 		void closeWindow();
 		void run();
 		
-		EventManagerPtr eventManager;
-		StateManagerPtr stateManager;
-		boost::shared_ptr<sf::RenderWindow> window;
+		shared_ptr<EventManager> eventManager;
+		shared_ptr<StateManager> stateManager;
+		shared_ptr<sf::RenderWindow> window;
 		
 	private:
 		void render();

@@ -5,12 +5,12 @@
  */
 
 #include "GameObject.h"
-#include "Exception.h"
-#include "SplashState.h"
-#include "ContentManager.h"
-#include "StateManager.h"
-#include "ScriptManager.h"
-#include "JSONValue.h"
+#include "../Exception.h"
+#include "../SplashState.h"
+#include "../ContentManager.h"
+#include "../StateManager.h"
+#include "../ScriptManager.h"
+#include "../JSONValue.h"
 
 #include <string>
 #include <iostream>
@@ -71,6 +71,10 @@ Handle<Value> GameObject::splash(const v8::Arguments &args)
 	// Extract arguments
 	
 	string splashFilename = extractString(args, 0);
+	
+	// TODO
+	// Make these optional
+	
 	double fadeIn = extractDouble(args, 1);
 	double hold = extractDouble(args, 2);
 	double fadeOut = extractDouble(args, 3);

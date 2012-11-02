@@ -11,6 +11,10 @@
 #include <string>
 #include <map>
 #include <boost/filesystem.hpp>
+#include <SFML/Audio.hpp>
+#include <boost/smart_ptr.hpp>
+
+using boost::shared_ptr;
 
 
 namespace bit
@@ -39,6 +43,11 @@ namespace bit
 		 * Loads a font from a file
 		 */
 		sf::FontPtr loadFont(const std::string &filename);
+		
+		/**
+		 * Loads a music file
+		 */
+		shared_ptr<sf::Music> loadMusic(const std::string &filename);
 		
 	private:
 		std::string getAbsoluteFilename(const std::string &filename);

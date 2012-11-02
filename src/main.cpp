@@ -9,7 +9,9 @@
 
 #include <iostream>
 #include <string>
+#include <boost/smart_ptr.hpp>
 
+using boost::shared_ptr;
 using namespace bit;
 using namespace std;
 
@@ -18,7 +20,7 @@ int main(int argc, const char *argv[])
 {
 	try
 	{
-		ApplicationPtr app(new Application());
+		shared_ptr<Application> app(new Application());
 		app->start();
 	}
 	catch (Exception &e)

@@ -26,6 +26,8 @@ namespace bit
 		ScriptManager();
 		~ScriptManager();
 		
+		void initializeJSON();
+		
 		/**
 		 * Adds an instance of an object to the globals in the V8 context
 		 */
@@ -75,8 +77,8 @@ namespace bit
 		static void catchException(const v8::TryCatch &tryCatch);
 		
 	private:
-		v8::Persistent<v8::Context> context;
-		v8::Isolate *isolate;
+		v8::Persistent<v8::Context> mainContext;
+		v8::Isolate *mainIsolate;
 		
 		v8::Persistent<v8::Function> jsonParse;
 		v8::Persistent<v8::Function> jsonStringify;

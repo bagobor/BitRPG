@@ -13,6 +13,10 @@ using namespace v8;
 
 JSONValue::JSONValue(Local<Value> rootValue, Isolate *isolate)
 {
+	Locker locker(isolate);
+	Isolate::Scope isolateScope(isolate);
+	HandleScope handleScope;
+	
 	value = Persistent<Value>::New(rootValue);
 	this->isolate = isolate;
 }
@@ -27,6 +31,7 @@ JSONValue::~JSONValue()
 JSONValue JSONValue::operator[](const char *key)
 {
 	Locker locker(isolate);
+	Isolate::Scope isolateScope(isolate);
 	HandleScope handleScope;
 	
 	// Check if value is an object
@@ -53,6 +58,7 @@ JSONValue JSONValue::operator[](const char *key)
 JSONValue JSONValue::operator[](int index)
 {
 	Locker locker(isolate);
+	Isolate::Scope isolateScope(isolate);
 	HandleScope handleScope;
 	
 	// Check if value is an array
@@ -113,6 +119,7 @@ bool JSONValue::isString()
 uint32_t JSONValue::arrayLength()
 {
 	Locker locker(isolate);
+	Isolate::Scope isolateScope(isolate);
 	HandleScope handleScope;
 	
 	Local<Value> valueLocal = Local<Value>::New(value);
@@ -128,10 +135,11 @@ uint32_t JSONValue::arrayLength()
 
 std::string JSONValue::toString()
 {
-	//if (!isString() && !isNumber())
+	//if (!isString())
 	//	throw bit::Exception("Value is not a string");
 	
 	Locker locker(isolate);
+	Isolate::Scope isolateScope(isolate);
 	HandleScope handleScope;
 	
 	Local<Value> valueLocal = Local<Value>::New(value);
@@ -145,6 +153,7 @@ std::string JSONValue::toString()
 int64_t JSONValue::toInteger()
 {
 	Locker locker(isolate);
+	Isolate::Scope isolateScope(isolate);
 	HandleScope handleScope;
 	
 	// Convert to Integer
@@ -158,6 +167,7 @@ int64_t JSONValue::toInteger()
 double JSONValue::toDouble()
 {
 	Locker locker(isolate);
+	Isolate::Scope isolateScope(isolate);
 	HandleScope handleScope;
 	
 	Local<Value> valueLocal = Local<Value>::New(value);
@@ -169,11 +179,10 @@ double JSONValue::toDouble()
 bool JSONValue::toBoolean()
 {
 	Locker locker(isolate);
+	Isolate::Scope isolateScope(isolate);
 	HandleScope handleScope;
 	
 	Local<Value> valueLocal = Local<Value>::New(value);
 	Local<BooleanObject> valueBoolean = Local<BooleanObject>::Cast(valueLocal);
 	return valueBoolean->BooleanValue();
 }
-
-

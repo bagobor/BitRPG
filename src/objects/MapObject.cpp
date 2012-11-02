@@ -5,13 +5,13 @@
  */
 
 #include "MapObject.h"
-#include "ContentManager.h"
-#include "ScriptManager.h"
-#include "JSONValue.h"
-#include "StateManager.h"
-#include "MapState.h"
-#include "Exception.h"
-#include "ScriptException.h"
+#include "../ContentManager.h"
+#include "../ScriptManager.h"
+#include "../JSONValue.h"
+#include "../StateManager.h"
+#include "../MapState.h"
+#include "../Exception.h"
+#include "../ScriptException.h"
 
 using namespace bit;
 using namespace v8;

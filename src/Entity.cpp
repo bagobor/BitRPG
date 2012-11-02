@@ -6,17 +6,22 @@
 
 #include "Entity.h"
 
+using namespace bit;
 using namespace sf;
 
 
-Entity::Entity(boost::shared_ptr<sf::Texture> texture)
+Entity::Entity()
 {
-	sprite.reset(new Sprite(*texture));
-	this->texture = texture;
 }
 
 
 void Entity::draw(RenderTarget &target, RenderStates states) const
 {
 	target.draw(*sprite, states);
+}
+
+
+void Entity::setTexture(TexturePtr texture)
+{
+	sprite.reset(new Sprite(*texture));
 }

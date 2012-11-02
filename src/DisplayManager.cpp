@@ -26,6 +26,13 @@ DisplayManager::DisplayManager()
 }
 
 
+DisplayManager::~DisplayManager()
+{
+	printf("~DisplayManager\n");
+	closeWindow();
+}
+
+
 void DisplayManager::openWindow(JSONValue &windowObject)
 {
 	if (window)
@@ -79,7 +86,8 @@ void DisplayManager::openWindow(JSONValue &windowObject)
 
 void DisplayManager::closeWindow()
 {
-	window->close();
+	if (window)
+		window->close();
 }
 
 

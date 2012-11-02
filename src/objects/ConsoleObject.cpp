@@ -5,7 +5,7 @@
  */
 
 #include "ConsoleObject.h"
-#include "ScriptException.h"
+#include "../ScriptException.h"
  
 #include <iostream>
 
@@ -23,7 +23,7 @@ Local<Object> ConsoleObject::createInstance()
 	
 	// Add the methods
 	
-	addPrototypeMethod(prototypeTemplate, print, "print");
+	addPrototypeMethod(prototypeTemplate, log, "log");
 	addPrototypeMethod(prototypeTemplate, input, "input");
 	
 	// Create the object template
@@ -40,7 +40,7 @@ Local<Object> ConsoleObject::createInstance()
 }
 
 
-Handle<Value> ConsoleObject::print(const Arguments &args)
+Handle<Value> ConsoleObject::log(const Arguments &args)
 {
 	HandleScope handleScope;
 	

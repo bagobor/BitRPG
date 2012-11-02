@@ -7,8 +7,7 @@
 #ifndef BitRPG_ItemObject_h
 #define BitRPG_ItemObject_h
 
-#include "BitRPG.h"
-#include "ScriptObject.h"
+#include "../ScriptObject.h"
 #include <v8.h>
 
 

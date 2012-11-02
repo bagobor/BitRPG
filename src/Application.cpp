@@ -14,9 +14,10 @@
 #include "MapState.h"
 #include "ScriptException.h"
 
-#include "ConsoleObject.h"
-#include "GameObject.h"
-#include "MapObject.h"
+#include "objects/ConsoleObject.h"
+#include "objects/GameObject.h"
+#include "objects/MapObject.h"
+#include "objects/AudioObject.h"
 
 #include <boost/thread/thread.hpp>
 #include <string>
@@ -90,6 +91,12 @@ void Application::registerScriptObjects()
 	gameObject->scriptManager = scriptManager;
 	scriptManager->registerObject(gameObject, "game");
 	
+	// audio
+	
+	AudioObject *audioObject = new AudioObject;
+	audioObject->contentManager = contentManager;
+	scriptManager->registerObject(audioObject, "audio");
+	
 	// map
 	
 	MapObject *mapObject = new MapObject;
@@ -134,9 +141,10 @@ void Application::startScriptThread(const string &text)
 		}
 		catch (Exception &e)
 		{
-			cout << "Exception: " << e.what() << endl;
+			cout << e.what() << endl;
 		}
 	}
 	
+	cout << endl;
 	cout << "Script thread finished" << endl;
 }

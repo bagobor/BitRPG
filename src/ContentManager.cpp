@@ -118,6 +118,22 @@ FontPtr ContentManager::loadFont(const string &filename)
 }
 
 
+shared_ptr<Music> ContentManager::loadMusic(const string &filename)
+{
+	string filePath = getAbsoluteFilename(filename);
+	
+	// Create the music
+	
+	shared_ptr<Music> music(new Music);
+	bool success = music->openFromFile(filename);
+	
+	if (!success)
+		throw bit::Exception("Music " + filePath + " could not be loaded");
+	
+	return music;
+}
+
+
 std::string ContentManager::getAbsoluteFilename(const string &filename)
 {
 	path relativePath(filename);
