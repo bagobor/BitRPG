@@ -137,7 +137,7 @@ void MapManager::loadTileset(JSONValue &tilesetObject)
 	
 	std::string imageFilename = tilesetObject["image"].toString();
 	
-	ImagePtr image = contentManager->loadImage(imageFilename);
+	shared_ptr<sf::Image> image = contentManager->loadImage(imageFilename);
 	
 	std::string name = tilesetObject["name"].toString();
 	int firstGid = tilesetObject["firstgid"].toInteger();
@@ -176,17 +176,17 @@ void MapManager::loadTileset(JSONValue &tilesetObject)
 				margin + (tileHeight + spacing) * y,
 				tileWidth, tileHeight);
 		
-		TexturePtr texture(new Texture);
+		shared_ptr<sf::Texture> texture(new Texture);
 		texture->loadFromImage(*image, rect);
 		
 		// Create MapTile
 		
-		MapTilePtr tile(new MapTile);
+		shared_ptr<MapTile> tile(new MapTile);
 		tile->texture = texture;
 		
 		// Add texture to vector
 		
-		tiles.insert(std::pair<int, MapTilePtr>(firstGid + index, tile));
+		tiles.insert(std::pair<int, shared_ptr<MapTile> >(firstGid + index, tile));
 	}
 }
 
@@ -236,7 +236,7 @@ void MapManager::loadLayer(JSONValue &layerObject, int zOrder)
 		
 		// Create the sprite
 		
-		SpritePtr tileSprite(new Sprite);
+		shared_ptr<sf::Sprite> tileSprite(new Sprite);
 		tileSprite->setTexture(*getTile(gid)->texture);
 		tileSprite->setPosition(pixelX, pixelY);
 		
@@ -250,9 +250,9 @@ void MapManager::loadLayer(JSONValue &layerObject, int zOrder)
 }
 
 
-MapTilePtr MapManager::getTile(int gid)
+shared_ptr<MapTile> MapManager::getTile(int gid)
 {
-	std::multimap<int, MapTilePtr>::iterator tileIt = tiles.find(gid);
+	std::multimap<int, shared_ptr<MapTile> >::iterator tileIt = tiles.find(gid);
 	
 	// Check if a tile with the gid exists
 	

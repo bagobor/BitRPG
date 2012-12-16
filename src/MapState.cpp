@@ -44,7 +44,7 @@ void MapState::draw(RenderTarget &target, RenderStates states) const
 }
 
 
-MapManagerPtr MapState::getMapManager()
+shared_ptr<MapManager> MapState::getMapManager()
 {
 	return mapManager;
 }

@@ -106,7 +106,7 @@ void MapObject::loadMap(const std::string &filename)
 	
 	// Load the map in the MapState
 	
-	MapStatePtr mapState = stateManager->getMapState();
+	shared_ptr<MapState> mapState = stateManager->getMapState();
 	mapState->loadMap(mapObject);
 }
 

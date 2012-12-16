@@ -7,9 +7,11 @@
 #ifndef BitRPG_SplashState_h
 #define BitRPG_SplashState_h
 
-#include "BitRPG.h"
 #include "State.h"
 #include <SFML/Graphics.hpp>
+#include <boost/shared_ptr.hpp>
+
+using boost::shared_ptr;
 
 
 namespace bit
@@ -24,12 +26,12 @@ namespace bit
 		void advanceFrame(float deltaTime);
 		void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 		
-		void setTexture(sf::TexturePtr texture);
+		void setTexture(shared_ptr<sf::Texture> texture);
 		void setFadeTimes(float fadeIn, float hold, float fadeOut);
 		
 	private:
-		sf::TexturePtr splashTexture;
-		sf::SpritePtr splashSprite;
+		shared_ptr<sf::Texture> splashTexture;
+		shared_ptr<sf::Sprite> splashSprite;
 		
 		float fadeIn;
 		float hold;

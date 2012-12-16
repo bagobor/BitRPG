@@ -6,6 +6,7 @@
 
 #include "GameObject.h"
 #include "../Exception.h"
+#include "../ScriptException.h"
 #include "../SplashState.h"
 #include "../ContentManager.h"
 #include "../StateManager.h"
@@ -14,6 +15,7 @@
 
 #include <string>
 #include <iostream>
+#include <boost/thread.hpp>
 
 using namespace bit;
 using namespace v8;
@@ -36,6 +38,7 @@ Local<Object> GameObject::createInstance()
 	
 	addPrototypeMethod(prototypeTemplate, runScript, "runScript");
 	addPrototypeMethod(prototypeTemplate, splash, "splash");
+	addPrototypeMethod(prototypeTemplate, sleep, "sleep");
 	
 	// Create the object template
 	
@@ -53,14 +56,21 @@ Local<Object> GameObject::createInstance()
 
 Handle<Value> GameObject::runScript(const v8::Arguments &args)
 {
-	// Extract arguments
-	
-	string scriptFilename = extractString(args, 0);
-	GameObject *p = static_cast<GameObject *>(extractHolder(args));
-	
-	// Call member function
-	
-	p->runScript(scriptFilename);
+	try
+	{
+		// Extract arguments
+		
+		string scriptFilename = extractString(args, 0);
+		GameObject *p = static_cast<GameObject *>(extractHolder(args));
+		
+		// Call member function
+		
+		p->runScript(scriptFilename);
+	}
+	catch (ScriptException &e)
+	{
+		return e.getException();
+	}
 	
 	return Undefined();
 }
@@ -68,21 +78,47 @@ Handle<Value> GameObject::runScript(const v8::Arguments &args)
 
 Handle<Value> GameObject::splash(const v8::Arguments &args)
 {
-	// Extract arguments
+	try
+	{
+		// Extract arguments
+		
+		string splashFilename = extractString(args, 0);
+		
+		// TODO
+		// Make these optional
+		
+		double fadeIn = extractDouble(args, 1);
+		double hold = extractDouble(args, 2);
+		double fadeOut = extractDouble(args, 3);
+		GameObject *p = static_cast<GameObject *>(extractHolder(args));
+		
+		// Call member function
+		
+		p->splash(splashFilename, fadeIn, hold, fadeOut);
+	}
+	catch (ScriptException &e)
+	{
+		return e.getException();
+	}
 	
-	string splashFilename = extractString(args, 0);
-	
-	// TODO
-	// Make these optional
-	
-	double fadeIn = extractDouble(args, 1);
-	double hold = extractDouble(args, 2);
-	double fadeOut = extractDouble(args, 3);
-	GameObject *p = static_cast<GameObject *>(extractHolder(args));
-	
-	// Call member function
-	
-	p->splash(splashFilename, fadeIn, hold, fadeOut);
+	return Undefined();
+}
+
+
+Handle<Value> GameObject::sleep(const v8::Arguments &args)
+{
+	try
+	{
+		double sleepTime = extractDouble(args, 0);
+		
+		boost::posix_time::time_duration duration =
+			boost::posix_time::milliseconds(sleepTime * 1000);
+		boost::this_thread::sleep(duration);
+	}
+	catch (ScriptException &e)
+	{
+		return e.getException();
+	}
 	
 	return Undefined();
 }
@@ -105,9 +141,9 @@ void GameObject::splash(const string &filename, double fadeIn,
 {
 	// Create the splash state
 	
-	SplashStatePtr splashState = stateManager->getSplashState();
+	shared_ptr<SplashState> splashState = stateManager->getSplashState();
 	
-	sf::TexturePtr splashTexture = contentManager->loadTexture(filename);
+	shared_ptr<sf::Texture> splashTexture = contentManager->loadTexture(filename);
 	splashState->setTexture(splashTexture);
 	splashState->setFadeTimes(fadeIn, hold, fadeOut);
 	

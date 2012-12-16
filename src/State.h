@@ -7,8 +7,8 @@
 #ifndef BitRPG_State_h
 #define BitRPG_State_h
 
-#include "BitRPG.h"
 #include <SFML/Graphics.hpp>
+
 
 namespace bit
 {

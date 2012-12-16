@@ -7,14 +7,15 @@
 #ifndef BitRPG_ScriptManager_h
 #define BitRPG_ScriptManager_h
 
-#include "BitRPG.h"
-
 #include <v8.h>
 #include <string>
 
 
 namespace bit
 {
+	class ScriptObject;
+	class JSONValue;
+	
 	/**
 	 * Manages the scripting engine
 	 *

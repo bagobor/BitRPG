@@ -7,13 +7,19 @@
 #ifndef BitRPG_StateManager_h
 #define BitRPG_StateManager_h
 
-#include "BitRPG.h"
-
+#include <SFML/System.hpp>
 #include <boost/thread/mutex.hpp>
+#include <boost/shared_ptr.hpp>
+
+using boost::shared_ptr;
 
 
 namespace bit
 {
+	class State;
+	class SplashState;
+	class MapState;
+	
 	class StateManager
 	{
 	public:
@@ -29,15 +35,15 @@ namespace bit
 		void initAllStates(const sf::Vector2u size);
 		void changeState(StateType stateType);
 		
-		StatePtr getCurrentState();
-		SplashStatePtr getSplashState();
-		MapStatePtr getMapState();
+		shared_ptr<State> getCurrentState();
+		shared_ptr<SplashState> getSplashState();
+		shared_ptr<MapState> getMapState();
 		
 	private:
 		StateType currentStateType;
 		
-		SplashStatePtr splashState;
-		MapStatePtr mapState;
+		shared_ptr<SplashState> splashState;
+		shared_ptr<MapState> mapState;
 	};
 }
 

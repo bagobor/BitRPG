@@ -7,19 +7,22 @@
 #ifndef BitRPG_MapManager_h
 #define BitRPG_MapManager_h
 
-#include "BitRPG.h"
 #include "JSONValue.h"
 
 #include <boost/weak_ptr.hpp>
 #include <SFML/Graphics.hpp>
 #include <map>
 #include <vector>
+#include <boost/shared_ptr.hpp>
 
-class MapTile;
+using boost::shared_ptr;
 
 
 namespace bit
 {
+	class ContentManager;
+	class MapTile;
+	
 	class MapManager : public sf::Drawable
 	{
 	public:
@@ -44,12 +47,12 @@ namespace bit
 		 */
 		bool isWall(int x, int y);
 		
-		ContentManagerPtr contentManager;
+		shared_ptr<ContentManager> contentManager;
 		
 	private:
 		void loadTileset(JSONValue &tilesetObject);
 		void loadLayer(JSONValue &layerObject, int zOrder);
-		MapTilePtr getTile(int gid);
+		shared_ptr<MapTile> getTile(int gid);
 		
 		boost::shared_ptr<sf::RenderTexture> mapTexture;
 		boost::shared_ptr<sf::Sprite> mapSprite;
@@ -58,13 +61,13 @@ namespace bit
 		// Drawable objects
 		
 		// TEMP
-		std::vector<sf::SpritePtr> tileSprites;
+		std::vector<shared_ptr<sf::Sprite> > tileSprites;
 		
 		// <z-order, sprite>
 		std::multimap<int, boost::weak_ptr<sf::Sprite> > sprites;
 		
 		// <gid, mapTile>
-		std::multimap<int, MapTilePtr> tiles;
+		std::multimap<int, shared_ptr<MapTile> > tiles;
 	};
 }
 

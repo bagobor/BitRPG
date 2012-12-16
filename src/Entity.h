@@ -7,7 +7,10 @@
 #ifndef BitRPG_Entity_h
 #define BitRPG_Entity_h
 
-#include "BitRPG.h"
+#include <SFML/Graphics.hpp>
+#include <boost/shared_ptr.hpp>
+
+using boost::shared_ptr;
 
 
 namespace bit
@@ -18,14 +21,14 @@ namespace bit
 		Entity();
 		
 		void draw(sf::RenderTarget &target, sf::RenderStates states) const;
-		void setTexture(sf::TexturePtr texture);
+		void setTexture(shared_ptr<sf::Texture> texture);
 		
 		sf::Vector2i mapPostion;
 		
-		sf::SpritePtr sprite;
+		shared_ptr<sf::Sprite> sprite;
 		
 	private:
-		sf::TexturePtr texture;
+		shared_ptr<sf::Texture> texture;
 	};
 }
 

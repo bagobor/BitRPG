@@ -29,11 +29,11 @@ ContentManager::ContentManager()
 }
 
 
-ImagePtr ContentManager::loadImage(const string &filename)
+shared_ptr<sf::Image> ContentManager::loadImage(const string &filename)
 {
 	// Check if image has already been loaded
 	
-	map<string, ImagePtr>::iterator imageIt;
+	map<string, shared_ptr<sf::Image> >::iterator imageIt;
 	imageIt = images.find(filename);
 	
 	if (imageIt != images.end())
@@ -46,7 +46,7 @@ ImagePtr ContentManager::loadImage(const string &filename)
 		
 		// Create a new image
 		
-		ImagePtr image(new Image);
+		shared_ptr<sf::Image> image(new Image);
 		bool success = image->loadFromFile(filePath);
 		
 		if (!success)
@@ -55,23 +55,23 @@ ImagePtr ContentManager::loadImage(const string &filename)
 		// Insert image into images map
 		
 		
-		pair<string, ImagePtr> imagePair(filename, image);
+		pair<string, shared_ptr<sf::Image> > imagePair(filename, image);
 		images.insert(imagePair);
 		return image;
 	}
 }
 
 
-TexturePtr ContentManager::loadTexture(const string &filename,
+shared_ptr<sf::Texture> ContentManager::loadTexture(const string &filename,
 	const IntRect &area)
 {
 	// Get image from filename
 	
-	ImagePtr image = loadImage(filename);
+	shared_ptr<sf::Image> image = loadImage(filename);
 	
 	// Create new texture from image
 	
-	sf::TexturePtr texture(new Texture);
+	shared_ptr<sf::Texture> texture(new Texture);
 	
 	{
 		// Create a new OpenGL context during the image-to-texture conversion
@@ -102,13 +102,13 @@ string ContentManager::loadText(const string &filename)
 }
 
 
-FontPtr ContentManager::loadFont(const string &filename)
+shared_ptr<sf::Font> ContentManager::loadFont(const string &filename)
 {
 	string filePath = getAbsoluteFilename(filename);
 	
 	// Create the font
 	
-	FontPtr font(new Font);
+	shared_ptr<sf::Font> font(new Font);
 	bool success = font->loadFromFile(filePath);
 	
 	if (!success)

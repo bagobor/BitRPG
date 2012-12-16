@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef BitRPG_DisplayManager_h
-#define BitRPG_DisplayManager_h
+#ifndef BitRPG_WindowManager_h
+#define BitRPG_WindowManager_h
 
 #include <SFML/Graphics.hpp>
 #include <boost/shared_ptr.hpp>
@@ -22,11 +22,11 @@ namespace bit
 	/**
 	 * Manages the window and final graphics rendering of the game
 	 */
-	class DisplayManager
+	class WindowManager
 	{
 	public:
-		DisplayManager();
-		~DisplayManager();
+		WindowManager();
+		~WindowManager();
 		
 		/**
 		 * Opens a window with the given window configuration

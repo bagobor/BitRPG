@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef BitRPG_GameObject_h
-#define BitRPG_GameObject_h
+#ifndef BitRPG_SplashObject_h
+#define BitRPG_SplashObject_h
 
 #include "../ScriptObject.h"
 
@@ -21,24 +21,17 @@ namespace bit
 	class StateManager;
 	class ScriptManager;
 	
-	class GameObject : public ScriptObject
+	class SplashObject : public ScriptObject
 	{
 	public:
-		GameObject();
+		SplashObject();
 		
 		v8::Local<v8::Object> createInstance();
 		
 		// GameObject specific functions
 		
-		/**
-		 * Blocks the currently running script to run another script
-		 * 
-		 * Once the script is finished, the script calling this function
-		 * resumes.
-		 */
-		static v8::Handle<v8::Value> runScript(const v8::Arguments &args);
-		static v8::Handle<v8::Value> splash(const v8::Arguments &args);
-		static v8::Handle<v8::Value> sleep(const v8::Arguments &args);
+		static v8::Handle<v8::Value> show(const v8::Arguments &args);
+		static v8::Handle<v8::Value> wait(const v8::Arguments &args);
 		
 		void runScript(const std::string &filename);
 		void splash(const std::string &filename, double fadeIn,

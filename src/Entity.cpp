@@ -21,7 +21,7 @@ void Entity::draw(RenderTarget &target, RenderStates states) const
 }
 
 
-void Entity::setTexture(TexturePtr texture)
+void Entity::setTexture(shared_ptr<sf::Texture> texture)
 {
 	sprite.reset(new Sprite(*texture));
 }

@@ -7,7 +7,7 @@
 #include "Application.h"
 #include "ContentManager.h"
 #include "ScriptManager.h"
-#include "DisplayManager.h"
+#include "WindowManager.h"
 #include "StateManager.h"
 #include "JSONValue.h"
 #include "Exception.h"
@@ -33,12 +33,12 @@ Application::Application()
 	
 	contentManager.reset(new ContentManager);
 	scriptManager.reset(new ScriptManager);
-	displayManager.reset(new DisplayManager);
+	windowManager.reset(new WindowManager);
 	stateManager.reset(new StateManager);
 	
 	// Satisfy component dependencies
 	
-	displayManager->stateManager = stateManager;
+	windowManager->stateManager = stateManager;
 	stateManager->getMapState()->contentManager = contentManager;
 }
 
@@ -52,27 +52,27 @@ void Application::start()
 	
 	// Start the scripting engine
 	
-	registerScriptObjects();
+	// registerScriptObjects();
 	
-	JSONValue scriptingValue = configValue["scripting"];
-	string entryFilename = scriptingValue["entry"].toString();
-	string entryText = contentManager->loadText(entryFilename);
+	// JSONValue scriptingValue = configValue["scripting"];
+	// string entryFilename = scriptingValue["start"].toString();
+	// string entryText = contentManager->loadText(entryFilename);
 	
-	// Open the DisplayManager window
+	// Open the WindowManager window
 	
 	JSONValue windowValue = configValue["window"];
-	displayManager->openWindow(windowValue);
+	windowManager->openWindow(windowValue);
 	
 	// Start the script thread
 	
-	boost::thread scriptThread(&Application::startScriptThread,
-		this, entryText);
+	// boost::thread scriptThread(&Application::startScriptThread,
+	// 	this, entryText);
 	
-	// Run the DisplayManager in the main thread
+	// Run the WindowManager in the main thread
 	// OS X requires that event checking should be done in the main thread,
 	// so this is the last thing this function should do.
 	
-	displayManager->run();
+	windowManager->run();
 }
 
 

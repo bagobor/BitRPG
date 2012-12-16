@@ -7,7 +7,10 @@
 #ifndef BitRPG_MapTile_h
 #define BitRPG_MapTile_h
 
-#include "BitRPG.h"
+#include <SFML/Graphics.hpp>
+#include <boost/shared_ptr.hpp>
+
+using boost::shared_ptr;
 
 
 namespace bit
@@ -15,7 +18,7 @@ namespace bit
 	class MapTile
 	{
 	public:
-		sf::TexturePtr texture;
+		shared_ptr<sf::Texture> texture;
 	};
 }
 

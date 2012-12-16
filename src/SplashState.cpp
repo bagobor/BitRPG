@@ -99,7 +99,7 @@ void SplashState::draw(RenderTarget &target, RenderStates states) const
 }
 
 
-void SplashState::setTexture(TexturePtr texture)
+void SplashState::setTexture(shared_ptr<sf::Texture> texture)
 {
 	// Create the splash texture
 	

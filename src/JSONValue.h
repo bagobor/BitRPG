@@ -7,13 +7,14 @@
 #ifndef scriptengine_DataObject_h
 #define scriptengine_DataObject_h
 
-#include "BitRPG.h"
 #include <v8.h>
 #include <string>
 
 
 namespace bit
 {
+	class ScriptManager;
+	
 	class JSONValue
 	{
 	public:

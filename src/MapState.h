@@ -7,13 +7,19 @@
 #ifndef BitRPG_MapState_h
 #define BitRPG_MapState_h
 
-#include "BitRPG.h"
 #include "State.h"
 #include <SFML/Graphics.hpp>
+#include <boost/shared_ptr.hpp>
+
+using boost::shared_ptr;
 
 
 namespace bit
 {
+	class ContentManager;
+	class MapManager;
+	class JSONValue;
+	
 	class MapState : public State
 	{
 	public:
@@ -24,13 +30,13 @@ namespace bit
 		void advanceFrame(float deltaTime);
 		void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 		
-		MapManagerPtr getMapManager();
+		shared_ptr<MapManager> getMapManager();
 		void loadMap(JSONValue &mapObject);
 		
-		ContentManagerPtr contentManager;
+		shared_ptr<ContentManager> contentManager;
 		
 	private:
-		MapManagerPtr mapManager;
+		shared_ptr<MapManager> mapManager;
 	};
 }
 

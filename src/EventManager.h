@@ -9,6 +9,9 @@
 
 #include "BitRPG.h"
 #include <SFML/Window.hpp>
+#include <boost/shared_ptr.hpp>
+
+using boost::shared_ptr;
 
 
 namespace bit
@@ -18,7 +21,7 @@ namespace bit
 	public:
 		void checkEvents();
 		
-		DisplayManagerPtr displayManager;
+		shared_ptr<Window> displayManager;
 		boost::shared_ptr<sf::Window> window;
 		
 	private:

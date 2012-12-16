@@ -7,10 +7,10 @@
 #ifndef BitRPG_ContentManager_h
 #define BitRPG_ContentManager_h
 
-#include "BitRPG.h"
 #include <string>
 #include <map>
 #include <boost/filesystem.hpp>
+#include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <boost/smart_ptr.hpp>
 
@@ -27,8 +27,8 @@ namespace bit
 		/**
 		 * Loads an SFML image from a file
 		 */
-		sf::ImagePtr loadImage(const std::string &filename);
-		sf::TexturePtr loadTexture(const std::string &filename,
+		shared_ptr<sf::Image> loadImage(const std::string &filename);
+		shared_ptr<sf::Texture> loadTexture(const std::string &filename,
 			const sf::IntRect &area=sf::IntRect());
 		
 		/**
@@ -42,7 +42,7 @@ namespace bit
 		/**
 		 * Loads a font from a file
 		 */
-		sf::FontPtr loadFont(const std::string &filename);
+		shared_ptr<sf::Font> loadFont(const std::string &filename);
 		
 		/**
 		 * Loads a music file
@@ -57,7 +57,7 @@ namespace bit
 		 */
 		boost::filesystem::path resourcePath;
 		
-		std::map<std::string, sf::ImagePtr> images;
+		std::map<std::string, shared_ptr<sf::Image> > images;
 	};
 }
 

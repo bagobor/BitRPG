@@ -4,8 +4,7 @@
  *
  */
 
-#include "DisplayManager.h"
-#include "EventManager.h"
+#include "WindowManager.h"
 #include "StateManager.h"
 #include "State.h"
 #include "JSONValue.h"
@@ -21,19 +20,18 @@ using namespace bit;
 using namespace sf;
 
 
-DisplayManager::DisplayManager()
+WindowManager::WindowManager()
 {
 }
 
 
-DisplayManager::~DisplayManager()
+WindowManager::~WindowManager()
 {
-	printf("~DisplayManager\n");
 	closeWindow();
 }
 
 
-void DisplayManager::openWindow(JSONValue &windowObject)
+void WindowManager::openWindow(JSONValue &windowObject)
 {
 	if (window)
 		throw bit::Exception("Window is already opened");
@@ -84,25 +82,25 @@ void DisplayManager::openWindow(JSONValue &windowObject)
 }
 
 
-void DisplayManager::closeWindow()
+void WindowManager::closeWindow()
 {
 	if (window)
 		window->close();
 }
 
 
-void DisplayManager::run()
+void WindowManager::run()
 {
 	if (!window)
 		throw bit::Exception("Window is not created");
 	
 	// Run the display loop
 	
-	while (window->isOpen())
+	while (window && window->isOpen())
 	{
 		// Get the current state
 		
-		StatePtr currentState = stateManager->getCurrentState();
+		shared_ptr<State> currentState = stateManager->getCurrentState();
 		
 		Event event;
 		
@@ -131,13 +129,13 @@ void DisplayManager::run()
 }
 
 
-void DisplayManager::render()
+void WindowManager::render()
 {
 	window->clear(Color::Black);
 	
 	// Render window
 	
-	StatePtr currentState = stateManager->getCurrentState();
+	shared_ptr<State> currentState = stateManager->getCurrentState();
 	
 	if (currentState)
 		window->draw(*currentState);

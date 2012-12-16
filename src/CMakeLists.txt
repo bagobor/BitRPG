@@ -27,7 +27,6 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 add_executable(BitRPG
 	main.cpp
-	BitRPG.h
 	Exception.cpp
 	Application.cpp
 	ContentManager.cpp
@@ -42,7 +41,7 @@ add_executable(BitRPG
 	objects/EntityObject.cpp
 	objects/AudioObject.cpp
 	
-	DisplayManager.cpp
+	WindowManager.cpp
 	StateManager.cpp
 	SplashState.cpp
 	MapState.cpp

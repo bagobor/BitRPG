@@ -17,7 +17,7 @@ namespace bit
 {
 	class ContentManager;
 	class ScriptManager;
-	class DisplayManager;
+	class WindowManager;
 	class StateManager;
 	
 	/**
@@ -38,7 +38,7 @@ namespace bit
 		
 		shared_ptr<ContentManager> contentManager;
 		shared_ptr<ScriptManager> scriptManager;
-		shared_ptr<DisplayManager> displayManager;
+		shared_ptr<WindowManager> windowManager;
 		shared_ptr<StateManager> stateManager;
 		
 	private:

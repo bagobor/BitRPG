@@ -35,12 +35,12 @@ void StateManager::changeState(StateType stateType)
 }
 
 
-StatePtr StateManager::getCurrentState()
+shared_ptr<State> StateManager::getCurrentState()
 {
 	switch (currentStateType)
 	{
 	case BLANKSTATE:
-		return StatePtr();
+		return shared_ptr<State>();
 	break;
 	
 	case SPLASHSTATE:
@@ -54,13 +54,13 @@ StatePtr StateManager::getCurrentState()
 }
 
 
-SplashStatePtr StateManager::getSplashState()
+shared_ptr<SplashState> StateManager::getSplashState()
 {
 	return splashState;
 }
 
 
-MapStatePtr StateManager::getMapState()
+shared_ptr<MapState> StateManager::getMapState()
 {
 	return mapState;
 }
