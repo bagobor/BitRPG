@@ -141,11 +141,11 @@ void GameObject::splash(const string &filename, double fadeIn,
 {
 	// Create the splash state
 	
-	shared_ptr<SplashState> splashState = stateManager->getSplashState();
+	// shared_ptr<SplashState> splashState = stateManager->getSplashState();
 	
-	shared_ptr<sf::Texture> splashTexture = contentManager->loadTexture(filename);
-	splashState->setTexture(splashTexture);
-	splashState->setFadeTimes(fadeIn, hold, fadeOut);
+	// shared_ptr<sf::Texture> splashTexture = contentManager->loadTexture(filename);
+	// splashState->setTexture(splashTexture);
+	// splashState->setFadeTimes(fadeIn, hold, fadeOut);
 	
-	stateManager->changeState(StateManager::SPLASHSTATE);
+	// stateManager->changeState(StateManager::SPLASHSTATE);
 }

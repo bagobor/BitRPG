@@ -15,20 +15,22 @@ using boost::shared_ptr;
 
 namespace bit
 {
-	class Entity : public sf::Drawable
+	struct MapProperties;
+	
+	class Entity
 	{
 	public:
-		Entity();
+		Entity() {}
 		
-		void draw(sf::RenderTarget &target, sf::RenderStates states) const;
-		void setTexture(shared_ptr<sf::Texture> texture);
-		
-		sf::Vector2i mapPostion;
+		void advanceFrame(float deltaTime);
+		void setMapPosition(const sf::Vector2i &mapPostion);
 		
 		shared_ptr<sf::Sprite> sprite;
+		shared_ptr<MapProperties> mapProperties;
 		
 	private:
-		shared_ptr<sf::Texture> texture;
+		sf::Vector2i mapPostion;
+		sf::Vector2f pixelOffset;
 	};
 }
 

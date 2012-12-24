@@ -5,14 +5,10 @@
  */
 
 #include "WindowManager.h"
-#include "StateManager.h"
-#include "State.h"
+#include "Screen.h"
 #include "JSONValue.h"
 #include "Exception.h"
-#include "MapState.h"
-#include "MapManager.h"
 
-#include "SplashState.h"
 #include <SFML/Window.hpp>
 #include <string>
 
@@ -22,6 +18,7 @@ using namespace sf;
 
 WindowManager::WindowManager()
 {
+	screenSize = sf::Vector2u(0, 0);
 }
 
 
@@ -52,6 +49,8 @@ void WindowManager::openWindow(JSONValue &windowObject)
 	if (zoom <= 0)
 		throw bit::Exception("Zoom must be greater than zero");
 	
+	screenSize.x = width;
+	screenSize.y = height;
 	this->zoom = zoom;
 	
 	// Create SFML RenderWindow
@@ -69,16 +68,18 @@ void WindowManager::openWindow(JSONValue &windowObject)
 	window->setFramerateLimit(framerate);
 	deltaTime = 1.0f / framerate;
 	
+	// Set miscellaneous window settings
+	
+	window->setKeyRepeatEnabled(true);
+	window->setVisible(true);
+	window->setVerticalSyncEnabled(false);
+	
 	// Create window view
 	
-	windowView.reset(new View(window->getDefaultView()));
-	windowView->setCenter(width / 2.0f, height / 2.0f);
-	windowView->zoom(1.0f / zoom);
-	window->setView(*windowView);
-	
-	// Initialize the MapManager size
-	
-	stateManager->initAllStates(window->getSize());
+	View windowView(window->getDefaultView());
+	windowView.setCenter(width / 2.0f, height / 2.0f);
+	windowView.zoom(1.0f / zoom);
+	window->setView(windowView);
 }
 
 
@@ -98,15 +99,11 @@ void WindowManager::run()
 	
 	while (window && window->isOpen())
 	{
-		// Get the current state
-		
-		shared_ptr<State> currentState = stateManager->getCurrentState();
-		
 		Event event;
 		
 		while (window->pollEvent(event))
 		{
-			// Close the window and stop the loop if the Escape key was pressed
+			// Close the window and stop the loop if the Close button was pressed
 			
 			if (event.type == Event::Closed)
 			{
@@ -115,14 +112,16 @@ void WindowManager::run()
 			
 			// Let the current state process the event
 			
-			if (currentState)
-				currentState->checkEvent(event);
+			if (activeScreen)
+				activeScreen->checkEvent(event);
 		}
 		
-		// Render the current state
+		// Advance the state's frame
 		
-		if (currentState)
-			currentState->advanceFrame(deltaTime);
+		if (activeScreen)
+			activeScreen->advanceFrame(deltaTime);
+		
+		// Render the window
 		
 		render();
 	}
@@ -131,15 +130,16 @@ void WindowManager::run()
 
 void WindowManager::render()
 {
+	// Clear the screen with a black background
+	
 	window->clear(Color::Black);
 	
-	// Render window
+	// Render the active screen to the render window
 	
-	shared_ptr<State> currentState = stateManager->getCurrentState();
+	if (activeScreen)
+		window->draw(*activeScreen);
 	
-	if (currentState)
-		window->draw(*currentState);
+	// Flip the window's double buffer
 	
-	window->setView(*windowView);
 	window->display();
 }

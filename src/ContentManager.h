@@ -24,40 +24,31 @@ namespace bit
 	public:
 		ContentManager();
 		
-		/**
-		 * Loads an SFML image from a file
-		 */
+		/**	Loads an SFML image from a file
+		*/
 		shared_ptr<sf::Image> loadImage(const std::string &filename);
-		shared_ptr<sf::Texture> loadTexture(const std::string &filename,
-			const sf::IntRect &area=sf::IntRect());
 		
-		/**
-		 * Loads a plaintext file
-		 *
-		 * This operation is intended to be used for scripts, config files, and
-		 * any other needed plaintext files.
-		 */
+		/**	Loads a plaintext file
+			
+			This operation is intended to be used for scripts, config files, and
+			any other needed plaintext files.
+		*/
 		std::string loadText(const std::string &filename);
 		
-		/**
-		 * Loads a font from a file
-		 */
+		/**	Loads a font from a file
+		*/
 		shared_ptr<sf::Font> loadFont(const std::string &filename);
 		
-		/**
-		 * Loads a music file
-		 */
+		/**	Loads a music file
+		*/
 		shared_ptr<sf::Music> loadMusic(const std::string &filename);
 		
 	private:
 		std::string getAbsoluteFilename(const std::string &filename);
 		
-		/**
-		 * The root content directory used to resolve relative file paths
-		 */
+		/**	The root content directory used to resolve relative file paths
+		*/
 		boost::filesystem::path resourcePath;
-		
-		std::map<std::string, shared_ptr<sf::Image> > images;
 	};
 }
 

@@ -18,7 +18,6 @@ namespace bit
 	class ContentManager;
 	class ScriptManager;
 	class WindowManager;
-	class StateManager;
 	
 	/**
 	 * Initializes all components needed to launch the game
@@ -39,11 +38,11 @@ namespace bit
 		shared_ptr<ContentManager> contentManager;
 		shared_ptr<ScriptManager> scriptManager;
 		shared_ptr<WindowManager> windowManager;
-		shared_ptr<StateManager> stateManager;
 		
 	private:
 		void registerScriptObjects();
 		void startScriptThread(const std::string &text);
+		void runScript();
 	};
 }
 

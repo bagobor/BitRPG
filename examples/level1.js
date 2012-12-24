@@ -52,11 +52,11 @@ function talk_to_troll(troll)
 	}
 	else if (answer == 2)
 	{
-		// Load the pizza item from a file
+		// Load an item from a file
 		
 		var pizza = new Item("pizza.json");
 		
-		// Give the player a pizza
+		// Give the player 1 piece of pizza
 		
 		troll.give(pizza, 1);
 	}

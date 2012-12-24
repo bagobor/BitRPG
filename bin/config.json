@@ -4,9 +4,9 @@
     "height": 240,
     "title": "Hello BitRPG",
     "framerate": 30,
-    "zoom": 2
+    "zoom": 3
   },
   "scripting": {
-    "entry": "scripts/hello.js"
+    "start": "scripts/main.js"
   }
 }

@@ -8,10 +8,8 @@
 #include "ContentManager.h"
 #include "ScriptManager.h"
 #include "WindowManager.h"
-#include "StateManager.h"
 #include "JSONValue.h"
 #include "Exception.h"
-#include "MapState.h"
 #include "ScriptException.h"
 
 #include "objects/ConsoleObject.h"
@@ -22,6 +20,11 @@
 #include <boost/thread/thread.hpp>
 #include <string>
 #include <iostream>
+ 
+#include "game/GameScreen.h"
+#include "game/Entity.h"
+#include "SharedSprite.h"
+#include "game/Map.h"
 
 using namespace bit;
 using namespace std;
@@ -34,12 +37,10 @@ Application::Application()
 	contentManager.reset(new ContentManager);
 	scriptManager.reset(new ScriptManager);
 	windowManager.reset(new WindowManager);
-	stateManager.reset(new StateManager);
 	
-	// Satisfy component dependencies
+	// Satisfy Manager dependencies
 	
-	windowManager->stateManager = stateManager;
-	stateManager->getMapState()->contentManager = contentManager;
+	// stateManager->getMapState()->contentManager = contentManager;
 }
 
 
@@ -68,9 +69,11 @@ void Application::start()
 	// boost::thread scriptThread(&Application::startScriptThread,
 	// 	this, entryText);
 	
+	boost::thread scriptThread(&Application::runScript, this);
+	
 	// Run the WindowManager in the main thread
 	// OS X requires that event checking should be done in the main thread,
-	// so this is the last thing this function should do.
+	// so this function will block until the window is closed.
 	
 	windowManager->run();
 }
@@ -78,6 +81,7 @@ void Application::start()
 
 void Application::registerScriptObjects()
 {
+	/*
 	// console
 	
 	ConsoleObject *consoleObject = new ConsoleObject;
@@ -104,6 +108,7 @@ void Application::registerScriptObjects()
 	mapObject->scriptManager = scriptManager;
 	mapObject->stateManager = stateManager;
 	scriptManager->registerObject(mapObject, "map");
+	*/
 }
 
 
@@ -147,4 +152,35 @@ void Application::startScriptThread(const string &text)
 	
 	cout << endl;
 	cout << "Script thread finished" << endl;
+}
+
+
+void Application::runScript()
+{
+	// Create the game screen
+	
+	shared_ptr<GameScreen> gameScreen(new GameScreen(windowManager->screenSize));
+	gameScreen->contentManager = contentManager;
+	
+	// Load the map
+	
+	std::string mapJSON = contentManager->loadText("maps/stranded.json");
+	JSONValue mapObject = scriptManager->parseJSON(mapJSON);
+	gameScreen->loadMap(mapObject);
+	
+	// Add an entity
+	
+	shared_ptr<sf::Image> megamanImage = contentManager->loadImage("images/megaman.gif");
+	shared_ptr<sf::Texture> megamanTexture(new sf::Texture);
+	megamanTexture->loadFromImage(*megamanImage);
+	shared_ptr<SharedSprite> megamanSprite(new SharedSprite(megamanTexture));
+	
+	shared_ptr<Entity> megamanEntity(new Entity);
+	megamanEntity->sprite = megamanSprite;
+	megamanEntity->setMapPosition(sf::Vector2i(3, 3));
+	gameScreen->map->addEntity(megamanEntity, 10);
+	
+	// Set the active screen
+	
+	windowManager->activeScreen = gameScreen;
 }

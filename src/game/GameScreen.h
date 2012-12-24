@@ -4,10 +4,10 @@
  *
  */
 
-#ifndef BitRPG_MapState_h
-#define BitRPG_MapState_h
+#ifndef BitRPG_GameScreen_h
+#define BitRPG_GameScreen_h
 
-#include "State.h"
+#include "../Screen.h"
 #include <SFML/Graphics.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -17,26 +17,24 @@ using boost::shared_ptr;
 namespace bit
 {
 	class ContentManager;
-	class MapManager;
+	class Map;
 	class JSONValue;
 	
-	class MapState : public State
+	class GameScreen : public Screen
 	{
 	public:
-		MapState();
+		GameScreen(const sf::Vector2u screenSize);
 		
-		void init(const sf::Vector2u size);
 		void checkEvent(sf::Event &event);
 		void advanceFrame(float deltaTime);
-		void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 		
-		shared_ptr<MapManager> getMapManager();
 		void loadMap(JSONValue &mapObject);
 		
 		shared_ptr<ContentManager> contentManager;
+		shared_ptr<Map> map;
 		
-	private:
-		shared_ptr<MapManager> mapManager;
+	protected:
+		void render() const;
 	};
 }
 

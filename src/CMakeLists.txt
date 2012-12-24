@@ -28,26 +28,28 @@ include_directories(${Boost_INCLUDE_DIRS})
 add_executable(BitRPG
 	main.cpp
 	Exception.cpp
+	
 	Application.cpp
+	WindowManager.cpp
 	ContentManager.cpp
 	
 	ScriptException.cpp
 	ScriptManager.cpp
 	JSONValue.cpp
 	ScriptObject.cpp
-	objects/ConsoleObject.cpp
-	objects/GameObject.cpp
-	objects/MapObject.cpp
-	objects/EntityObject.cpp
-	objects/AudioObject.cpp
+	#objects/ConsoleObject.cpp
+	#objects/GameObject.cpp
+	#objects/MapObject.cpp
+	#objects/EntityObject.cpp
+	#objects/AudioObject.cpp
 	
-	WindowManager.cpp
-	StateManager.cpp
-	SplashState.cpp
-	MapState.cpp
-	MapManager.cpp
+	#SplashScreen.cpp
+	Screen.cpp
+	SharedSprite.cpp
 	
-	Entity.cpp
+	game/GameScreen.cpp
+	game/Map.cpp
+	game/Entity.cpp
 )
 
 

@@ -9,7 +9,7 @@
 #include "../ScriptManager.h"
 #include "../JSONValue.h"
 #include "../StateManager.h"
-#include "../MapState.h"
+#include "../GameState.h"
 #include "../Exception.h"
 #include "../ScriptException.h"
 
@@ -106,8 +106,8 @@ void MapObject::loadMap(const std::string &filename)
 	
 	// Load the map in the MapState
 	
-	shared_ptr<MapState> mapState = stateManager->getMapState();
-	mapState->loadMap(mapObject);
+	// shared_ptr<GameState> gameState = stateManager->createGameState();
+	// gameState->loadMap(mapObject);
 }
 
 
@@ -115,5 +115,5 @@ void MapObject::show()
 {
 	// Change the state to MapState
 	
-	stateManager->changeState(StateManager::MAPSTATE);
+	// stateManager->changeState(StateManager::MAPSTATE);
 }

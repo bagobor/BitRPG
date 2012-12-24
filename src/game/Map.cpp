@@ -4,61 +4,58 @@
  *
  */
 
-#include "MapManager.h"
-#include "ContentManager.h"
-#include "Exception.h"
+#include "Map.h"
+#include "../ContentManager.h"
+#include "../Exception.h"
 #include "Entity.h"
-#include "MapTile.h"
+#include "../SharedSprite.h"
 
 #include <string>
 #include <sstream>
 
 using namespace bit;
-using namespace sf;
 
 
-MapManager::MapManager()
+Map::Map(const sf::Vector2u &screenSize)
 {
-}
-
-
-void MapManager::initSize(int pixelWidth, int pixelHeight)
-{
+	mapProperties.reset(new MapProperties);
+	
 	// Create the map view
 	
-	mapView.reset(new View);
-	mapView->setSize(pixelWidth, pixelHeight);
-	mapView->setCenter(200.0f, 200.0f);
+	mapView.reset(new sf::View);
+	mapView->setSize(screenSize.x, screenSize.y);
 	
-	// Create the map texture
+	// TEMP
+	// Set the center of the map view
+	mapView->setCenter(screenSize.x / 2.0f, screenSize.y / 2.0f);
 	
-	mapTexture.reset(new RenderTexture);
-	mapTexture->create(pixelWidth, pixelHeight);
+	// Create the map render texture
+	
+	mapTexture.reset(new sf::RenderTexture);
+	mapTexture->create(screenSize.x, screenSize.y);
 	mapTexture->setView(*mapView);
 	
-	// Create the map sprite
+	// Create the map sprite with the map render texture
 	
-	mapSprite.reset(new Sprite);
+	mapSprite.reset(new sf::Sprite);
 	mapSprite->setTexture(mapTexture->getTexture());
-	
-	
 }
 
 
-void MapManager::loadMap(JSONValue &mapObject)
+void Map::load(JSONValue &mapObject)
 {
 	if (mapObject["orientation"].toString() != "orthogonal")
 		throw bit::Exception("Map must be orthogonal");
 	
 	// Set the tile dimensions
 	
-	tileWidth = mapObject["tilewidth"].toInteger();
-	tileHeight = mapObject["tileheight"].toInteger();
+	mapProperties->tileSize.x = mapObject["tilewidth"].toInteger();
+	mapProperties->tileSize.y = mapObject["tileheight"].toInteger();
 	
-	mapWidth = mapObject["width"].toInteger();
-	mapHeight = mapObject["height"].toInteger();
+	mapProperties->mapSize.x = mapObject["width"].toInteger();
+	mapProperties->mapSize.y = mapObject["height"].toInteger();
 	
-	if (tileWidth <= 0 || tileHeight <= 0)
+	if (mapProperties->tileSize.x <= 0 || mapProperties->tileSize.y <= 0)
 		throw bit::Exception("Tile dimensions must be greater than zero");
 	
 	// Build tilesets
@@ -90,22 +87,44 @@ void MapManager::loadMap(JSONValue &mapObject)
 		
 		loadLayer(layerObject, index);
 	}
+	
+	// Clear the temporary tiles map
+	
+	tiles.clear();
 }
 
 
-void MapManager::draw(RenderTarget &target, RenderStates states) const
+void Map::advanceFrame(float deltaTime)
+{
+	for (std::vector<shared_ptr<Entity> >::iterator entityIt =
+		entities.begin(); entityIt != entities.end(); entityIt++)
+	{
+		// Advance the entity's frame
+		
+		(*entityIt)->advanceFrame(deltaTime);
+	}
+}
+
+
+void Map::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
 	mapTexture->clear();
 	
 	// Draw all the sprites ordered by their z-order, ascending
 	
-	for (std::multimap<int, boost::weak_ptr<Sprite> >::const_iterator spriteIt =
+	for (std::multimap<int, shared_ptr<sf::Sprite> >::const_iterator spriteIt =
 		sprites.begin(); spriteIt != sprites.end(); spriteIt++)
 	{
-		boost::shared_ptr<Sprite> sprite = spriteIt->second.lock();
+		shared_ptr<sf::Sprite> sprite = spriteIt->second;
+		
+		// Check that the graphic exists
 		
 		if (sprite)
+		{
+			// Draw the sprite onto the map
+			
 			mapTexture->draw(*sprite);
+		}
 	}
 	
 	// Draw the map sprite onto the window
@@ -115,29 +134,29 @@ void MapManager::draw(RenderTarget &target, RenderStates states) const
 }
 
 
-bool MapManager::isWall(int x, int y)
+void Map::addEntity(shared_ptr<Entity> entity, int zOrder)
 {
-	// TODO Implement this operation
+	// Set the MapProperties of the entity
 	
-	return false;
+	entity->mapProperties = mapProperties;
+	
+	// Append the entity to the entities list
+	
+	entities.push_back(entity);
+	
+	// Insert the entity's sprite into the sprites list
+	
+	std::pair<int, shared_ptr<sf::Sprite> > spritePair(zOrder, entity->sprite);
+	sprites.insert(spritePair);
 }
 
 
-/*
-void MapManager::addEntity(EntityPtr entity, int zOrder)
-{
-	entities.insert(std::pair<int, EntityPtr>(zOrder, entity));
-}
-*/
-
-
-void MapManager::loadTileset(JSONValue &tilesetObject)
+void Map::loadTileset(JSONValue &tilesetObject)
 {
 	// Extract most of the JSONValue data
 	
 	std::string imageFilename = tilesetObject["image"].toString();
-	
-	shared_ptr<sf::Image> image = contentManager->loadImage(imageFilename);
+	shared_ptr<sf::Image> tilesetImage = contentManager->loadImage(imageFilename);
 	
 	std::string name = tilesetObject["name"].toString();
 	int firstGid = tilesetObject["firstgid"].toInteger();
@@ -172,26 +191,23 @@ void MapManager::loadTileset(JSONValue &tilesetObject)
 		int x = index % mapWidth;
 		int y = index / mapWidth;
 		
-		IntRect rect(margin + (tileWidth + spacing) * x,
+		sf::IntRect rect(margin + (tileWidth + spacing) * x,
 				margin + (tileHeight + spacing) * y,
 				tileWidth, tileHeight);
 		
-		shared_ptr<sf::Texture> texture(new Texture);
-		texture->loadFromImage(*image, rect);
-		
-		// Create MapTile
-		
-		shared_ptr<MapTile> tile(new MapTile);
-		tile->texture = texture;
+		shared_ptr<sf::Texture> tileTexture(new sf::Texture);
+		tileTexture->loadFromImage(*tilesetImage, rect);
 		
 		// Add texture to vector
 		
-		tiles.insert(std::pair<int, shared_ptr<MapTile> >(firstGid + index, tile));
+		std::pair<int, shared_ptr<sf::Texture> > tilePair(firstGid + index,
+			tileTexture);
+		tiles.insert(tilePair);
 	}
 }
 
 
-void MapManager::loadLayer(JSONValue &layerObject, int zOrder)
+void Map::loadLayer(JSONValue &layerObject, int zOrder)
 {
 	// Check that this is a tile layer
 	
@@ -226,33 +242,31 @@ void MapManager::loadLayer(JSONValue &layerObject, int zOrder)
 	{
 		int gid = dataArray[index].toInteger();
 		
-		// If gid is zero, don't make a sprite
+		// If gid is zero, don't make a Graphic
 		
 		if (gid == 0)
 			continue;
 		
-		int pixelX = (mapX + index % mapWidth) * tileWidth;
-		int pixelY = (mapY + index / mapWidth) * tileHeight;
+		int pixelX = (mapX + index % mapWidth) * mapProperties->tileSize.x;
+		int pixelY = (mapY + index / mapWidth) * mapProperties->tileSize.y;
 		
-		// Create the sprite
+		// Create the Graphic from the appropriate tile
 		
-		shared_ptr<sf::Sprite> tileSprite(new Sprite);
-		tileSprite->setTexture(*getTile(gid)->texture);
-		tileSprite->setPosition(pixelX, pixelY);
+		shared_ptr<SharedSprite> sprite(new SharedSprite);
+		sprite->setTexture(getTile(gid));
+		sprite->setPosition(pixelX, pixelY);
 		
-		// Put the sprite in the layerSprites map
+		// Insert the sprite in the graphics map
 		
-		tileSprites.push_back(tileSprite);
-		
-		sprites.insert(std::pair<int, boost::weak_ptr<Sprite> >
-			(zOrder, boost::weak_ptr<Sprite>(tileSprite)));
+		std::pair<int, shared_ptr<SharedSprite> > spritePair(zOrder, sprite);
+		sprites.insert(spritePair);
 	}
 }
 
 
-shared_ptr<MapTile> MapManager::getTile(int gid)
+shared_ptr<sf::Texture> Map::getTile(int gid)
 {
-	std::multimap<int, shared_ptr<MapTile> >::iterator tileIt = tiles.find(gid);
+	std::multimap<int, shared_ptr<sf::Texture> >::iterator tileIt = tiles.find(gid);
 	
 	// Check if a tile with the gid exists
 	

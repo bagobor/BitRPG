@@ -31,56 +31,17 @@ ContentManager::ContentManager()
 
 shared_ptr<sf::Image> ContentManager::loadImage(const string &filename)
 {
-	// Check if image has already been loaded
+	string filePath = getAbsoluteFilename(filename);
 	
-	map<string, shared_ptr<sf::Image> >::iterator imageIt;
-	imageIt = images.find(filename);
+	// Create a new image
 	
-	if (imageIt != images.end())
-	{
-		return imageIt->second;
-	}
-	else
-	{
-		string filePath = getAbsoluteFilename(filename);
-		
-		// Create a new image
-		
-		shared_ptr<sf::Image> image(new Image);
-		bool success = image->loadFromFile(filePath);
-		
-		if (!success)
-			throw bit::Exception("Could not load file " + filename);
-		
-		// Insert image into images map
-		
-		
-		pair<string, shared_ptr<sf::Image> > imagePair(filename, image);
-		images.insert(imagePair);
-		return image;
-	}
-}
-
-
-shared_ptr<sf::Texture> ContentManager::loadTexture(const string &filename,
-	const IntRect &area)
-{
-	// Get image from filename
+	shared_ptr<sf::Image> image(new Image);
+	bool success = image->loadFromFile(filePath);
 	
-	shared_ptr<sf::Image> image = loadImage(filename);
+	if (!success)
+		throw bit::Exception("Could not load file " + filename);
 	
-	// Create new texture from image
-	
-	shared_ptr<sf::Texture> texture(new Texture);
-	
-	{
-		// Create a new OpenGL context during the image-to-texture conversion
-		
-		Context context;
-		texture->loadFromImage(*image, area);
-	}
-	
-	return texture;
+	return image;
 }
 
 

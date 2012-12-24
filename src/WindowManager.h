@@ -15,12 +15,10 @@ using boost::shared_ptr;
 
 namespace bit
 {
-	class EventManager;
-	class StateManager;
 	class JSONValue;
+	class Screen;
 	
-	/**
-	 * Manages the window and final graphics rendering of the game
+	/**	Manages the window and final graphics rendering of the game
 	 */
 	class WindowManager
 	{
@@ -28,24 +26,32 @@ namespace bit
 		WindowManager();
 		~WindowManager();
 		
-		/**
-		 * Opens a window with the given window configuration
+		/**	Opens a window with the given window configuration
 		 */
 		void openWindow(JSONValue &windowValue);
 		void closeWindow();
 		void run();
 		
-		shared_ptr<EventManager> eventManager;
-		shared_ptr<StateManager> stateManager;
 		shared_ptr<sf::RenderWindow> window;
+		shared_ptr<Screen> activeScreen;
+		
+		sf::Vector2u screenSize;
 		
 	private:
+		/**	Renders the current frame to the render window
+		*/
 		void render();
 		
+		/**	The zoom factor of the active screen rendered onto the window
+			
+			This equals the ratio of window pixels to screen pixels in each
+			dimension.
+		*/
 		int zoom;
-		float deltaTime;
 		
-		boost::shared_ptr<sf::View> windowView;
+		/**	The reciprocal of the framerate
+		*/
+		float deltaTime;
 	};
 }
 
