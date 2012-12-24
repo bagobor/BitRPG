@@ -19,22 +19,28 @@ namespace bit
 	class ContentManager;
 	class Map;
 	class JSONValue;
+	class Entity;
 	
 	class GameScreen : public Screen
 	{
 	public:
-		GameScreen(const sf::Vector2u screenSize);
-		
 		void checkEvent(sf::Event &event);
 		void advanceFrame(float deltaTime);
 		
 		void loadMap(JSONValue &mapObject);
+		
+		void addEntity(shared_ptr<Entity> entity, int zOrder);
 		
 		shared_ptr<ContentManager> contentManager;
 		shared_ptr<Map> map;
 		
 	protected:
 		void render() const;
+	
+	private:
+		/**	A complete list of entities to be rendered on the map
+		*/
+		std::vector<shared_ptr<Entity> > entities;
 	};
 }
 

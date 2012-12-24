@@ -20,7 +20,7 @@ namespace bit
 	class Entity
 	{
 	public:
-		Entity() {}
+		Entity();
 		
 		void advanceFrame(float deltaTime);
 		void setMapPosition(const sf::Vector2i &mapPostion);
@@ -31,6 +31,7 @@ namespace bit
 	private:
 		sf::Vector2i mapPostion;
 		sf::Vector2f pixelOffset;
+		bool hasMoved;
 	};
 }
 

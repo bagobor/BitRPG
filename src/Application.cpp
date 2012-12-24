@@ -159,7 +159,8 @@ void Application::runScript()
 {
 	// Create the game screen
 	
-	shared_ptr<GameScreen> gameScreen(new GameScreen(windowManager->screenSize));
+	shared_ptr<GameScreen> gameScreen(new GameScreen);
+	gameScreen->init(windowManager->screenSize);
 	gameScreen->contentManager = contentManager;
 	
 	// Load the map
@@ -178,7 +179,7 @@ void Application::runScript()
 	shared_ptr<Entity> megamanEntity(new Entity);
 	megamanEntity->sprite = megamanSprite;
 	megamanEntity->setMapPosition(sf::Vector2i(3, 3));
-	gameScreen->map->addEntity(megamanEntity, 10);
+	gameScreen->addEntity(megamanEntity, 10);
 	
 	// Set the active screen
 	

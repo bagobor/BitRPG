@@ -11,9 +11,15 @@
 using namespace bit;
 
 
+Entity::Entity()
+{
+	hasMoved = true;
+}
+
+
 void Entity::advanceFrame(float deltaTime)
 {
-	if (sprite && mapProperties)
+	if (hasMoved && sprite && mapProperties)
 	{
 		// Calculate the pixel location of the sprite
 		
@@ -26,6 +32,8 @@ void Entity::advanceFrame(float deltaTime)
 		// Set the sprite position
 		
 		sprite->setPosition(pixelPosition);
+		
+		hasMoved = false;
 	}
 }
 
@@ -33,4 +41,6 @@ void Entity::advanceFrame(float deltaTime)
 void Entity::setMapPosition(const sf::Vector2i &mapPostion)
 {
 	this->mapPostion = mapPostion;
+	
+	hasMoved = true;
 }

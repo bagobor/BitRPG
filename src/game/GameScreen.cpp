@@ -7,61 +7,87 @@
 #include "GameScreen.h"
 #include "Map.h"
 #include "../JSONValue.h"
-#include <stdio.h>
+#include "Entity.h"
 
 using namespace bit;
 using namespace sf;
 
 
-GameScreen::GameScreen(const Vector2u screenSize) : Screen(screenSize)
-{
-	map.reset(new Map(screenSize));
-}
-
-
 void GameScreen::checkEvent(Event &event)
 {
-	// TEMP
 	// Scrolls the view around using the arrow keys
 	
 	if (event.type == Event::KeyPressed)
 	{
 		Event::KeyEvent keyEvent = event.key;
-		float speed = 8.0f;
 		
 		if (keyEvent.code == Keyboard::Right)
-			map->mapView->move(speed, 0.0f);
+			;
 		
 		if (keyEvent.code == Keyboard::Left)
-			map->mapView->move(-speed, 0.0f);
+			;
 		
 		if (keyEvent.code == Keyboard::Up)
-			map->mapView->move(0.0f, -speed);
+			;
 		
 		if (keyEvent.code == Keyboard::Down)
-			map->mapView->move(0.0f, speed);
+			;
 	}
 }
 
 
 void GameScreen::advanceFrame(float deltaTime)
 {
-	// Advance the map's frame
+	// Iterate through each entity
 	
-	map->advanceFrame(deltaTime);
-}
-
-
-void GameScreen::render() const
-{
-	screenTexture->draw(*map);
+	for (std::vector<shared_ptr<Entity> >::iterator entityIt =
+		entities.begin(); entityIt != entities.end(); entityIt++)
+	{
+		// Advance the entity's frame
+		
+		(*entityIt)->advanceFrame(deltaTime);
+	}
 }
 
 
 void GameScreen::loadMap(JSONValue &mapObject)
 {
-	// This should be moved somewhere else when Manager handling is improved.
+	// Create and initialize the Map
 	
+	map.reset(new Map(screenTexture->getSize()));
 	map->contentManager = contentManager;
 	map->load(mapObject);
+	
+	// Remove all entities from the GameScreen entities list
+	
+	entities.clear();
+}
+
+
+void GameScreen::addEntity(shared_ptr<Entity> entity, int zOrder)
+{
+	// Append the entity to the entities list
+	
+	entities.push_back(entity);
+	
+	if (map)
+	{
+		// Set the MapProperties of the entity
+		
+		entity->mapProperties = map->mapProperties;
+		
+		// Insert the entity's sprite into the map's sprites list
+		
+		std::pair<int, shared_ptr<sf::Sprite> > spritePair(zOrder, entity->sprite);
+		map->sprites.insert(spritePair);
+	}
+}
+
+
+void GameScreen::render() const
+{
+	if (map)
+	{
+		screenTexture->draw(*map);
+	}
 }

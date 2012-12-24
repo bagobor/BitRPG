@@ -21,7 +21,6 @@ namespace bit
 {
 	class ContentManager;
 	class SharedSprite;
-	class Entity;
 	struct MapProperties;
 	
 	class Map : public sf::Drawable
@@ -30,10 +29,7 @@ namespace bit
 		Map(const sf::Vector2u &screenSize);
 		void load(JSONValue &mapObject);
 		
-		void advanceFrame(float deltaTime);
 		void draw(sf::RenderTarget &target, sf::RenderStates states) const;
-		
-		void addEntity(shared_ptr<Entity> entity, int zOrder);
 		
 		/**	Checks whether the player is blocked from walking
 			onto a given coordinate
@@ -45,6 +41,12 @@ namespace bit
 		
 		shared_ptr<MapProperties> mapProperties;
 		
+		/**	The Graphics on the map, used for fast access to rendering
+			
+			The multimap is ordered by the z-order of the sprite.
+		*/
+		std::multimap<int, shared_ptr<sf::Sprite> > sprites;
+		
 	private:
 		void loadTileset(JSONValue &tilesetObject);
 		void loadLayer(JSONValue &layerObject, int zOrder);
@@ -52,16 +54,6 @@ namespace bit
 		
 		shared_ptr<sf::RenderTexture> mapTexture;
 		shared_ptr<sf::Sprite> mapSprite;
-		
-		/**	The Graphics on the map, used for fast access to rendering
-			
-			The multimap is ordered by the z-order of the sprite.
-		*/
-		std::multimap<int, shared_ptr<sf::Sprite> > sprites;
-		
-		/**	A complete list of entities to be rendered on the map
-		*/
-		std::vector<shared_ptr<Entity> > entities;
 		
 		/**	Temporary storage of tile textures during the map loading process
 			

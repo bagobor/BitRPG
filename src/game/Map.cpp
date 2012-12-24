@@ -94,18 +94,6 @@ void Map::load(JSONValue &mapObject)
 }
 
 
-void Map::advanceFrame(float deltaTime)
-{
-	for (std::vector<shared_ptr<Entity> >::iterator entityIt =
-		entities.begin(); entityIt != entities.end(); entityIt++)
-	{
-		// Advance the entity's frame
-		
-		(*entityIt)->advanceFrame(deltaTime);
-	}
-}
-
-
 void Map::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
 	mapTexture->clear();
@@ -131,23 +119,6 @@ void Map::draw(sf::RenderTarget &target, sf::RenderStates states) const
 	
 	mapTexture->display();
 	target.draw(*mapSprite, states);
-}
-
-
-void Map::addEntity(shared_ptr<Entity> entity, int zOrder)
-{
-	// Set the MapProperties of the entity
-	
-	entity->mapProperties = mapProperties;
-	
-	// Append the entity to the entities list
-	
-	entities.push_back(entity);
-	
-	// Insert the entity's sprite into the sprites list
-	
-	std::pair<int, shared_ptr<sf::Sprite> > spritePair(zOrder, entity->sprite);
-	sprites.insert(spritePair);
 }
 
 

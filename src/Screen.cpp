@@ -10,7 +10,7 @@
 using namespace bit;
 
 
-Screen::Screen(const sf::Vector2u screenSize)
+void Screen::init(const sf::Vector2u screenSize)
 {
 	// Create the screen texture
 	

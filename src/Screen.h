@@ -20,7 +20,7 @@ namespace bit
 	public:
 		/**	Initializes the screen with the size in pixels
 		*/
-		Screen(const sf::Vector2u screenSize);
+		void init(const sf::Vector2u screenSize);
 		
 		/**	Handles an SFML input event caught from the current window
 		*/
