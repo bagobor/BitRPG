@@ -63,11 +63,20 @@ void GameScreen::advanceFrame(float deltaTime)
 }
 
 
+void GameScreen::draw(sf::RenderTarget &target, sf::RenderStates states) const
+{
+	if (map)
+	{
+		map->draw(target, states);
+	}
+}
+
+
 void GameScreen::loadMap(JSONValue &mapObject)
 {
 	// Create and initialize the Map
 	
-	map.reset(new Map(screenTexture->getSize()));
+	map.reset(new Map(screenSize));
 	map->contentManager = contentManager;
 	map->load(mapObject);
 	
@@ -93,14 +102,5 @@ void GameScreen::addEntity(shared_ptr<Entity> entity, int zOrder)
 		
 		std::pair<int, shared_ptr<sf::Sprite> > spritePair(zOrder, entity->sprite);
 		map->sprites.insert(spritePair);
-	}
-}
-
-
-void GameScreen::render() const
-{
-	if (map)
-	{
-		screenTexture->draw(*map);
 	}
 }

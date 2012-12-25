@@ -44,7 +44,6 @@ add_executable(BitRPG
 	#objects/AudioObject.cpp
 	
 	#SplashScreen.cpp
-	Screen.cpp
 	SharedSprite.cpp
 	
 	game/GameScreen.cpp

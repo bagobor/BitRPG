@@ -27,6 +27,10 @@ namespace bit
 		bool checkEvent(sf::Event &event);
 		void advanceFrame(float deltaTime);
 		
+		/**	Draws the graphics of this state to a render target
+		*/
+		void draw(sf::RenderTarget &target, sf::RenderStates states) const;
+		
 		void loadMap(JSONValue &mapObject);
 		
 		void addEntity(shared_ptr<Entity> entity, int zOrder);
@@ -34,9 +38,6 @@ namespace bit
 		shared_ptr<ContentManager> contentManager;
 		shared_ptr<Map> map;
 		
-	protected:
-		void render() const;
-	
 	private:
 		/**	A complete list of entities to be rendered on the map
 		*/

@@ -80,6 +80,16 @@ void WindowManager::openWindow(JSONValue &windowObject)
 	windowView.setCenter(width / 2.0f, height / 2.0f);
 	windowView.zoom(1.0f / zoom);
 	window->setView(windowView);
+	
+	// Create the screen texture
+	
+	screenTexture.reset(new sf::RenderTexture);
+	screenTexture->create(screenSize.x, screenSize.y);
+	
+	// Create the screen sprite from the screen texture's internal texture.
+	// The correct size of the sprite should be set by the texture.
+	
+	screenSprite.reset(new sf::Sprite(screenTexture->getTexture()));
 }
 
 
@@ -128,11 +138,20 @@ void WindowManager::render()
 	// Clear the screen with a black background
 	
 	window->clear(Color::Black);
+	screenTexture->clear(Color::Black);
 	
 	// Render the active screen to the render window
 	
 	if (activeScreen)
-		window->draw(*activeScreen);
+	{
+		screenTexture->draw(*activeScreen);
+	}
+	
+	// Draw the screen onto the window
+	
+	screenTexture->display();
+	
+	window->draw(*screenSprite);
 	
 	// Flip the window's double buffer
 	

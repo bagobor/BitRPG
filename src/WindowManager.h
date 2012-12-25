@@ -38,6 +38,9 @@ namespace bit
 		sf::Vector2u screenSize;
 		
 	private:
+		shared_ptr<sf::RenderTexture> screenTexture;
+		shared_ptr<sf::Sprite> screenSprite;
+		
 		/**	Renders the current frame to the render window
 		*/
 		void render();

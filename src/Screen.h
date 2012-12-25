@@ -20,11 +20,17 @@ namespace bit
 	public:
 		/**	Initializes the screen with the size in pixels
 		*/
-		void init(const sf::Vector2u screenSize);
+		void init(const sf::Vector2u screenSize)
+		{
+			this->screenSize = screenSize;
+		}
 		
 		/**	Handles an SFML input event caught from the current window
 		*/
-		virtual bool checkEvent(sf::Event &event);
+		virtual bool checkEvent(sf::Event &event)
+		{
+			return false;
+		}
 		
 		/**	Advances the screen's state by one frame
 			
@@ -32,19 +38,8 @@ namespace bit
 		*/
 		virtual void advanceFrame(float deltaTime) {}
 		
-		/**	Draws the graphics of this state to a render target
-		*/
-		void draw(sf::RenderTarget &target, sf::RenderStates states) const;
-		
 	protected:
-		shared_ptr<sf::RenderTexture> screenTexture;
-		
-		/**	Renders everything on the screen to the screenTexture
-		*/
-		virtual void render() const =0;
-		
-	private:
-		shared_ptr<sf::Sprite> screenSprite;
+		sf::Vector2u screenSize;
 	};
 }
 
