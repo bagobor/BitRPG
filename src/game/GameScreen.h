@@ -24,7 +24,7 @@ namespace bit
 	class GameScreen : public Screen
 	{
 	public:
-		void checkEvent(sf::Event &event);
+		bool checkEvent(sf::Event &event);
 		void advanceFrame(float deltaTime);
 		
 		void loadMap(JSONValue &mapObject);

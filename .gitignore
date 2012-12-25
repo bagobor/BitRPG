@@ -1,8 +1,9 @@
 
 # Generated folders
 
-!/bin
-!/docs
+/bin
+/docs
+/notes
 
 # CMake generated files
 
@@ -26,3 +27,7 @@ install_manifest.txt
 Icon?
 ehthumbs.db
 Thumbs.db
+
+.gitignore
+
+.gitignore

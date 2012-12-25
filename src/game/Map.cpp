@@ -98,6 +98,16 @@ void Map::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
 	mapTexture->clear();
 	
+	// Calculate the viewport of the map
+	
+	// TODO
+	// This doesn't work correctly. The rectangle always starts at (0, 0)
+	// and does not depend on the view position.
+	
+	sf::IntRect targetIntRect = target.getViewport(target.getView());
+	sf::FloatRect targetRect(targetIntRect.left, targetIntRect.top,
+		targetIntRect.width, targetIntRect.height);
+	
 	// Draw all the sprites ordered by their z-order, ascending
 	
 	for (std::multimap<int, shared_ptr<sf::Sprite> >::const_iterator spriteIt =
@@ -109,9 +119,12 @@ void Map::draw(sf::RenderTarget &target, sf::RenderStates states) const
 		
 		if (sprite)
 		{
-			// Draw the sprite onto the map
-			
-			mapTexture->draw(*sprite);
+			if (sprite->getGlobalBounds().intersects(targetRect))
+			{
+				// Draw the sprite onto the map
+				
+				mapTexture->draw(*sprite);
+			}
 		}
 	}
 	

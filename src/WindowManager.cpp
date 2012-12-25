@@ -103,16 +103,11 @@ void WindowManager::run()
 		
 		while (window->pollEvent(event))
 		{
-			// Close the window and stop the loop if the Close button was pressed
-			
-			if (event.type == Event::Closed)
-			{
-				closeWindow();
-			}
+			bool caught = checkGlobalEvent(event);
 			
 			// Let the current state process the event
 			
-			if (activeScreen)
+			if (!caught && activeScreen)
 				activeScreen->checkEvent(event);
 		}
 		
@@ -142,4 +137,35 @@ void WindowManager::render()
 	// Flip the window's double buffer
 	
 	window->display();
+}
+
+
+bool WindowManager::checkGlobalEvent(sf::Event &event)
+{
+	// Check if the close button was pressed
+	
+	if (event.type == Event::Closed)
+	{
+		// Close the window and stop the loop
+	
+		closeWindow();
+		return true;
+	}
+	
+	// Check for global key presses
+	
+	if (event.type == Event::KeyPressed)
+	{
+		Event::KeyEvent keyEvent = event.key;
+		
+		if (keyEvent.code == Keyboard::Escape)
+		{
+			// Close the window and stop the loop
+			
+			closeWindow();
+			return true;
+		}
+	}
+	
+	return false;
 }

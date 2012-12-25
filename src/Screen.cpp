@@ -24,6 +24,14 @@ void Screen::init(const sf::Vector2u screenSize)
 }
 
 
+bool Screen::checkEvent(sf::Event &event)
+{
+	// If this operation is not implemented, do not catch any events.
+	
+	return false;
+}
+
+
 void Screen::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
 	screenTexture->clear(sf::Color::Black);

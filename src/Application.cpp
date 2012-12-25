@@ -178,7 +178,7 @@ void Application::runScript()
 	
 	shared_ptr<Entity> megamanEntity(new Entity);
 	megamanEntity->sprite = megamanSprite;
-	megamanEntity->setMapPosition(sf::Vector2i(3, 3));
+	megamanEntity->place(sf::Vector2f(3, 3));
 	gameScreen->addEntity(megamanEntity, 10);
 	
 	// Set the active screen

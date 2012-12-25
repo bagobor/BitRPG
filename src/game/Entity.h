@@ -23,14 +23,15 @@ namespace bit
 		Entity();
 		
 		void advanceFrame(float deltaTime);
-		void setMapPosition(const sf::Vector2i &mapPostion);
+		void place(const sf::Vector2f &mapPostion);
+		void move(const sf::Vector2f &deltaPosition);
+		void quantize();
 		
 		shared_ptr<sf::Sprite> sprite;
 		shared_ptr<MapProperties> mapProperties;
 		
 	private:
-		sf::Vector2i mapPostion;
-		sf::Vector2f pixelOffset;
+		sf::Vector2f mapPostion;
 		bool hasMoved;
 	};
 }

@@ -31,10 +31,10 @@ namespace bit
 		
 		void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 		
-		/**	Checks whether the player is blocked from walking
+		/**	Checks whether characters are blocked from walking
 			onto a given coordinate
 		*/
-		// bool checkCollision(int x, int y);
+		// bool isSolid(int x, int y);
 		
 		shared_ptr<ContentManager> contentManager;
 		shared_ptr<sf::View> mapView;

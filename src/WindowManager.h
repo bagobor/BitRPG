@@ -42,6 +42,12 @@ namespace bit
 		*/
 		void render();
 		
+		/**	Checks an event independent of the active screen
+			
+			@returns Whether the event was caught
+		*/
+		bool checkGlobalEvent(sf::Event &event);
+		
 		/**	The zoom factor of the active screen rendered onto the window
 			
 			This equals the ratio of window pixels to screen pixels in each

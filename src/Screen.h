@@ -24,7 +24,7 @@ namespace bit
 		
 		/**	Handles an SFML input event caught from the current window
 		*/
-		virtual void checkEvent(sf::Event &event) {}
+		virtual bool checkEvent(sf::Event &event);
 		
 		/**	Advances the screen's state by one frame
 			

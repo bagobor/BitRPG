@@ -7,6 +7,7 @@
 #include "Entity.h"
 #include "../SharedSprite.h"
 #include "Map.h"
+#include <math.h>
 
 using namespace bit;
 
@@ -27,8 +28,6 @@ void Entity::advanceFrame(float deltaTime)
 		pixelPosition.x = mapPostion.x * mapProperties->tileSize.x;
 		pixelPosition.y = mapPostion.y * mapProperties->tileSize.y;
 		
-		pixelPosition += pixelOffset;
-		
 		// Set the sprite position
 		
 		sprite->setPosition(pixelPosition);
@@ -38,9 +37,26 @@ void Entity::advanceFrame(float deltaTime)
 }
 
 
-void Entity::setMapPosition(const sf::Vector2i &mapPostion)
+void Entity::place(const sf::Vector2f &mapPostion)
 {
 	this->mapPostion = mapPostion;
 	
 	hasMoved = true;
+}
+
+
+void Entity::move(const sf::Vector2f &deltaPosition)
+{
+	this->mapPostion += deltaPosition;
+	
+	hasMoved = true;
+}
+
+
+void Entity::quantize()
+{
+	// Round the map positions to the nearest integer map tile
+	
+	mapPostion.x = floorf(mapPostion.x + 0.5f);
+	mapPostion.y = floorf(mapPostion.y + 0.5f);
 }

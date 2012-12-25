@@ -13,26 +13,39 @@ using namespace bit;
 using namespace sf;
 
 
-void GameScreen::checkEvent(Event &event)
+bool GameScreen::checkEvent(Event &event)
 {
-	// Scrolls the view around using the arrow keys
+	// Catch key events
 	
 	if (event.type == Event::KeyPressed)
 	{
 		Event::KeyEvent keyEvent = event.key;
+		shared_ptr<Entity> player = entities[0];
 		
 		if (keyEvent.code == Keyboard::Right)
-			;
+			player->move(sf::Vector2f(0.5f, 0));
 		
-		if (keyEvent.code == Keyboard::Left)
-			;
+		else if (keyEvent.code == Keyboard::Left)
+			player->move(sf::Vector2f(-0.5f, 0));
 		
-		if (keyEvent.code == Keyboard::Up)
-			;
+		else if (keyEvent.code == Keyboard::Up)
+			player->move(sf::Vector2f(0, -0.5f));
 		
-		if (keyEvent.code == Keyboard::Down)
-			;
+		else if (keyEvent.code == Keyboard::Down)
+			player->move(sf::Vector2f(0, 0.5f));
+		
+		else
+			return false;
 	}
+	
+	// No events were caught
+	
+	else
+	{
+		return false;
+	}
+	
+	return true;
 }
 
 
