@@ -8,7 +8,7 @@
 #define BitRPG_WindowManager_h
 
 #include <SFML/Graphics.hpp>
-#include <boost/shared_ptr.hpp>
+#include <boost/smart_ptr.hpp>
 
 using boost::shared_ptr;
 
@@ -17,6 +17,7 @@ namespace bit
 {
 	class JSONValue;
 	class Screen;
+	class Console;
 	
 	/**	Manages the window and final graphics rendering of the game
 	 */
@@ -61,6 +62,9 @@ namespace bit
 		/**	The reciprocal of the framerate
 		*/
 		float deltaTime;
+		
+		shared_ptr<Console> console;
+		bool consoleEnabled;
 	};
 }
 

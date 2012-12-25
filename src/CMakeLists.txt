@@ -29,9 +29,10 @@ add_executable(BitRPG
 	main.cpp
 	Exception.cpp
 	
+	ContentManager.cpp
 	Application.cpp
 	WindowManager.cpp
-	ContentManager.cpp
+	Console.cpp
 	
 	ScriptException.cpp
 	ScriptManager.cpp

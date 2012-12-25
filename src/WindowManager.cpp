@@ -8,6 +8,7 @@
 #include "Screen.h"
 #include "JSONValue.h"
 #include "Exception.h"
+#include "Console.h"
 
 #include <SFML/Window.hpp>
 #include <string>
@@ -19,6 +20,12 @@ using namespace sf;
 WindowManager::WindowManager()
 {
 	screenSize = sf::Vector2u(0, 0);
+	
+	// Create the Console
+	
+	console.reset(new Console);
+	
+	consoleEnabled = false;
 }
 
 
@@ -35,27 +42,27 @@ void WindowManager::openWindow(JSONValue &windowObject)
 	
 	// Extract all the JSON data
 	
-	int width = windowObject["width"].toInteger();
-	int height = windowObject["height"].toInteger();
+	sf::Vector2u screenSize;
+	screenSize.x = windowObject["width"].toInteger();
+	screenSize.y = windowObject["height"].toInteger();
 	int zoom = windowObject["zoom"].toInteger();
 	int framerate = windowObject["framerate"].toInteger();
 	std::string title = windowObject["title"].toString();
 	
 	// Validate the config file
 	
-	if (width <= 0 || height <= 0)
+	if (screenSize.x <= 0 || screenSize.y <= 0)
 		throw bit::Exception("Window size must be greater than zero");
 	
 	if (zoom <= 0)
 		throw bit::Exception("Zoom must be greater than zero");
 	
-	screenSize.x = width;
-	screenSize.y = height;
+	this->screenSize = screenSize;
 	this->zoom = zoom;
 	
 	// Create SFML RenderWindow
 	
-	VideoMode videoMode(width * zoom, height * zoom, 32);
+	VideoMode videoMode(screenSize.x * zoom, screenSize.y * zoom, 32);
 	Uint32 windowStyle = Style::Titlebar | Style::Close;
 	
 	window.reset(new RenderWindow(videoMode, title.c_str(), windowStyle));
@@ -77,7 +84,7 @@ void WindowManager::openWindow(JSONValue &windowObject)
 	// Create window view
 	
 	View windowView(window->getDefaultView());
-	windowView.setCenter(width / 2.0f, height / 2.0f);
+	windowView.setCenter(screenSize.x / 2.0f, screenSize.y / 2.0f);
 	windowView.zoom(1.0f / zoom);
 	window->setView(windowView);
 	
@@ -90,6 +97,10 @@ void WindowManager::openWindow(JSONValue &windowObject)
 	// The correct size of the sprite should be set by the texture.
 	
 	screenSprite.reset(new sf::Sprite(screenTexture->getTexture()));
+	
+	// Initialize the Console
+	
+	console->init(screenSize);
 }
 
 
@@ -115,11 +126,19 @@ void WindowManager::run()
 		{
 			bool caught = checkGlobalEvent(event);
 			
+			if (!caught && consoleEnabled)
+				caught = console->checkEvent(event);
+			
 			// Let the current state process the event
 			
 			if (!caught && activeScreen)
-				activeScreen->checkEvent(event);
+				caught = activeScreen->checkEvent(event);
 		}
+		
+		// Advance the console's frame
+		
+		if (consoleEnabled)
+			console->advanceFrame(deltaTime);
 		
 		// Advance the state's frame
 		
@@ -143,14 +162,16 @@ void WindowManager::render()
 	// Render the active screen to the render window
 	
 	if (activeScreen)
-	{
 		screenTexture->draw(*activeScreen);
-	}
+	
+	// Render the console to the render window
+	
+	if (consoleEnabled)
+		screenTexture->draw(*console);
 	
 	// Draw the screen onto the window
 	
 	screenTexture->display();
-	
 	window->draw(*screenSprite);
 	
 	// Flip the window's double buffer
@@ -168,12 +189,11 @@ bool WindowManager::checkGlobalEvent(sf::Event &event)
 		// Close the window and stop the loop
 	
 		closeWindow();
-		return true;
 	}
 	
 	// Check for global key presses
 	
-	if (event.type == Event::KeyPressed)
+	else if (event.type == Event::KeyPressed)
 	{
 		Event::KeyEvent keyEvent = event.key;
 		
@@ -182,9 +202,21 @@ bool WindowManager::checkGlobalEvent(sf::Event &event)
 			// Close the window and stop the loop
 			
 			closeWindow();
-			return true;
 		}
+		
+		else if (keyEvent.code == Keyboard::Tab)
+		{
+			// Toggle the console state
+			
+			consoleEnabled = !consoleEnabled;
+		}
+		
+		else
+			return false;
 	}
 	
-	return false;
+	else
+		return false;
+	
+	return true;
 }
