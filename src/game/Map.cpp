@@ -137,57 +137,42 @@ void Map::draw(sf::RenderTarget &target, sf::RenderStates states) const
 
 void Map::loadTileset(JSONValue &tilesetObject)
 {
-	// Extract most of the JSONValue data
+	// Extract the tileset data
 	
 	std::string imageFilename = tilesetObject["image"].toString();
-	shared_ptr<sf::Image> tilesetImage = contentManager->loadImage(imageFilename);
 	
 	std::string name = tilesetObject["name"].toString();
 	int firstGid = tilesetObject["firstgid"].toInteger();
 	
-	int imageWidth = tilesetObject["imagewidth"].toInteger();
-	int imageHeight = tilesetObject["imageheight"].toInteger();
-	int tileWidth = tilesetObject["tilewidth"].toInteger();
-	int tileHeight = tilesetObject["tileheight"].toInteger();
+	// int imageWidth = tilesetObject["imagewidth"].toInteger();
+	// int imageHeight = tilesetObject["imageheight"].toInteger();
+	
+	sf::Vector2u tileSize;
+	tileSize.x = tilesetObject["tilewidth"].toInteger();
+	tileSize.y = tilesetObject["tileheight"].toInteger();
 	int margin = tilesetObject["margin"].toInteger();
 	int spacing = tilesetObject["spacing"].toInteger();
 	
-	// Check the math of the tileset dimensions
+	// Load the tileset
 	
-	if ((imageWidth + spacing - 2 * margin) % (spacing + tileWidth) != 0)
-		throw bit::Exception("Tileset image '" + imageFilename +
-				"' does not have a valid width");
+	std::vector<shared_ptr<sf::Texture> > tilesetTextures =
+		contentManager->loadTileset(imageFilename, tileSize, margin, spacing);
 	
-	if ((imageHeight + spacing - 2 * margin) % (spacing + tileHeight) != 0)
-		throw bit::Exception("Tileset image '" + imageFilename +
-				"' does not have a valid height");
+	int tilesetLength = tilesetTextures.size();
 	
-	// Create the map dimensions of the tileset.
-	// These correspond to the number of tiles
-	// across the image in each dimension.
+	// Iterate through each tile in the tileset
 	
-	int mapWidth = (imageWidth + spacing - 2 * margin) / (spacing + tileWidth);
-	int mapHeight = (imageHeight + spacing - 2 * margin) / (spacing + tileHeight);
-	int mapLength = mapWidth * mapHeight;
-	
-	for (int index = 0; index < mapLength; ++index)
+	for (int index = 0; index < tilesetLength; ++index)
 	{
-		int x = index % mapWidth;
-		int y = index / mapWidth;
+		shared_ptr<sf::Texture> tileTexture = tilesetTextures[index];
 		
-		sf::IntRect rect(margin + (tileWidth + spacing) * x,
-				margin + (tileHeight + spacing) * y,
-				tileWidth, tileHeight);
-		
-		shared_ptr<sf::Texture> tileTexture(new sf::Texture);
-		tileTexture->loadFromImage(*tilesetImage, rect);
-		
-		// Add texture to vector
+		// Add the texture to the tiles map
 		
 		std::pair<int, shared_ptr<sf::Texture> > tilePair(firstGid + index,
 			tileTexture);
 		tiles.insert(tilePair);
 	}
+	
 }
 
 

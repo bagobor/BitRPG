@@ -28,7 +28,7 @@ JSONValue::~JSONValue()
 }
 
 
-JSONValue JSONValue::operator[](const char *key)
+JSONValue JSONValue::operator[](const std::string &key)
 {
 	Locker locker(isolate);
 	Isolate::Scope isolateScope(isolate);
@@ -41,7 +41,7 @@ JSONValue JSONValue::operator[](const char *key)
 	
 	Local<Value> valueLocal = Local<Value>::New(value);
 	Local<Object> valueObject = Local<Object>::Cast(valueLocal);
-	Local<String> keyString = String::New(key);
+	Local<String> keyString = String::New(key.c_str());
 	
 	// Check if key exists
 	

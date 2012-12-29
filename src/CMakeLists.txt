@@ -50,6 +50,7 @@ add_executable(BitRPG
 	game/GameScreen.cpp
 	game/Map.cpp
 	game/Entity.cpp
+	game/EntityType.cpp
 )
 
 

@@ -8,7 +8,7 @@
 #define BitRPG_ContentManager_h
 
 #include <string>
-#include <map>
+#include <vector>
 #include <boost/filesystem.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
@@ -28,10 +28,16 @@ namespace bit
 		*/
 		shared_ptr<sf::Image> loadImage(const std::string &filename);
 		
+		/**	Loads a list of textures from an image file
+		*/
+		std::vector<shared_ptr<sf::Texture> > loadTileset(
+			const std::string &filename, sf::Vector2u tileSize,
+			int margin=0, int spacing=0);
+		
 		/**	Loads a plaintext file
 			
 			This operation is intended to be used for scripts, config files, and
-			any other needed plaintext files.
+			any other plaintext files.
 		*/
 		std::string loadText(const std::string &filename);
 		

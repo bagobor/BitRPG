@@ -25,6 +25,7 @@
 #include "game/Entity.h"
 #include "SharedSprite.h"
 #include "game/Map.h"
+#include "game/EntityType.h"
 
 using namespace bit;
 using namespace std;
@@ -169,19 +170,27 @@ void Application::runScript()
 	JSONValue mapObject = scriptManager->parseJSON(mapJSON);
 	gameScreen->loadMap(mapObject);
 	
-	// Add an entity
-	
-	shared_ptr<sf::Image> megamanImage = contentManager->loadImage("images/megaman.gif");
-	shared_ptr<sf::Texture> megamanTexture(new sf::Texture);
-	megamanTexture->loadFromImage(*megamanImage);
-	shared_ptr<SharedSprite> megamanSprite(new SharedSprite(megamanTexture));
-	
-	shared_ptr<Entity> megamanEntity(new Entity);
-	megamanEntity->sprite = megamanSprite;
-	megamanEntity->place(sf::Vector2f(3, 3));
-	gameScreen->addEntity(megamanEntity, 10);
-	
-	// Set the active screen
-	
-	windowManager->activeScreen = gameScreen;
+	try
+	{
+		// Add an entity
+		
+		std::string playerText = contentManager->loadText("entities/player.json");
+		JSONValue playerValue = scriptManager->parseJSON(playerText);
+		
+		shared_ptr<EntityType> playerType(new EntityType);
+		playerType->contentManager = contentManager;
+		playerType->load(playerValue);
+		
+		shared_ptr<Entity> player(new Entity(playerType));
+		player->place(sf::Vector2f(3, 3));
+		gameScreen->addEntity(player, 10);
+		
+		// Set the active screen
+		
+		windowManager->activeScreen = gameScreen;
+	}
+	catch (bit::Exception &e)
+	{
+		std::cout << "Error: " << e.what() << endl;
+	}
 }

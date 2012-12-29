@@ -25,7 +25,7 @@ namespace bit
 		 *
 		 * This operation is only valid for objects.
 		 */
-		JSONValue operator[](const char *key);
+		JSONValue operator[](const std::string &key);
 		
 		/**
 		 * Accesses a value specified by an integer index

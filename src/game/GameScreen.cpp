@@ -6,6 +6,7 @@
 
 #include "GameScreen.h"
 #include "Map.h"
+#include "../SharedSprite.h"
 #include "../JSONValue.h"
 #include "Entity.h"
 

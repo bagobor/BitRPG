@@ -45,6 +45,66 @@ shared_ptr<sf::Image> ContentManager::loadImage(const string &filename)
 }
 
 
+std::vector<shared_ptr<sf::Texture> > ContentManager::loadTileset(
+	const std::string &filename, sf::Vector2u tileSize,
+	int margin, int spacing)
+{
+	// Load the image
+	
+	shared_ptr<sf::Image> image = loadImage(filename);
+	sf::Vector2u imageSize = image->getSize();
+	
+	// Check the math of the tileset dimensions
+	
+	if ((imageSize.x + spacing - 2 * margin) % (spacing + tileSize.x) != 0)
+		throw bit::Exception("Tileset '" + filename +
+				"' does not have a valid width");
+	
+	if ((imageSize.y + spacing - 2 * margin) % (spacing + tileSize.y) != 0)
+		throw bit::Exception("Tileset '" + filename +
+				"' does not have a valid height");
+	
+	// Calculate the number of tiles across the tileset in each dimension
+	
+	sf::Vector2u tilesetSize;
+	tilesetSize.x = (imageSize.x + spacing - 2 * margin) / (spacing + tileSize.x);
+	tilesetSize.y = (imageSize.y + spacing - 2 * margin) / (spacing + tileSize.y);
+	
+	sf::Vector2i tileSignedSize(tileSize.x, tileSize.y);
+	
+	// Extract each tile from the image
+	
+	std::vector<shared_ptr<sf::Texture> > textures;
+	
+	for (int tileY = 0; tileY < tilesetSize.y; ++tileY)
+	{
+		// Calculate the y position of the tile
+		
+		sf::Vector2i tilePosition;
+		tilePosition.y = margin + (tileSize.y + spacing) * tileY;
+		
+		for (int tileX = 0; tileX < tilesetSize.x; ++tileX)
+		{
+			// Calculate the x position of the tile
+			
+			tilePosition.x = margin + (tileSize.x + spacing) * tileX;
+			sf::IntRect tileRect(tilePosition, tileSignedSize);
+			
+			// Create the texture from the image around the rectangle boundary
+			
+			shared_ptr<sf::Texture> texture(new sf::Texture);
+			texture->loadFromImage(*image, tileRect);
+			
+			// Add it to the textures list
+			
+			textures.push_back(texture);
+		}
+	}
+	
+	return textures;
+}
+
+
 string ContentManager::loadText(const string &filename)
 {
 	string filePath = getAbsoluteFilename(filename);
