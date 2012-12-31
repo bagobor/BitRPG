@@ -10,14 +10,16 @@
 #include "EntityType.h"
 #include <SFML/Graphics.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 
 using boost::shared_ptr;
+using boost::weak_ptr;
 
 
 namespace bit
 {
 	class SharedSprite;
-	struct MapProperties;
+	class Map;
 	
 	class Entity
 	{
@@ -25,17 +27,25 @@ namespace bit
 		Entity(shared_ptr<EntityType> entityType);
 		
 		void advanceFrame(float deltaTime);
-		void place(const sf::Vector2f &mapPostion);
-		void move(const sf::Vector2f &deltaPosition);
+		void place(const sf::Vector2u &mapPostion);
+		void move(const sf::Vector2u &deltaPosition);
 		void quantize();
 		
 		shared_ptr<SharedSprite> sprite;
-		shared_ptr<MapProperties> mapProperties;
+		weak_ptr<Map> mapWeak;
 		
-	private:
+	protected:
+		shared_ptr<EntityType> entityType;
 		shared_ptr<EntityType::Animation> activeAnimation;
 		
-		sf::Vector2f mapPostion;
+		/**	The coordinates of the Entity on the map
+		*/
+		sf::Vector2u mapPostion;
+		
+		/**	The fractional part of the map position
+		*/
+		sf::Vector2f tilePosition;
+		
 		bool hasMoved;
 		
 		int frame;

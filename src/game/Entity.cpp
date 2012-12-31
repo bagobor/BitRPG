@@ -14,6 +14,8 @@ using namespace bit;
 
 Entity::Entity(shared_ptr<EntityType> entityType)
 {
+	this->entityType = entityType;
+	
 	hasMoved = true;
 	frame = 0;
 	subFrame = 0;
@@ -25,7 +27,7 @@ Entity::Entity(shared_ptr<EntityType> entityType)
 	// TEMP
 	
 	activeAnimation = entityType->getAnimation("idle");
-	printf("%d\n", (int) activeAnimation->frames.size());
+	printf("%d frames\n", (int) activeAnimation->frames.size());
 	
 	sprite->setTexture(activeAnimation->frames[0]);
 }
@@ -52,13 +54,17 @@ void Entity::advanceFrame(float deltaTime)
 	
 	// Handle sprite movement
 	
-	if (hasMoved && sprite && mapProperties)
+	if (hasMoved && sprite)
 	{
+		shared_ptr<Map> map = mapWeak.lock();
+		
 		// Calculate the pixel location of the sprite
 		
 		sf::Vector2f pixelPosition;
-		pixelPosition.x = mapPostion.x * mapProperties->tileSize.x;
-		pixelPosition.y = mapPostion.y * mapProperties->tileSize.y;
+		pixelPosition.x = (int) (mapPostion.x * map->tileSize.x +
+			tilePosition.x * map->tileSize.x + entityType->offsetPixels.x);
+		pixelPosition.y = (int) (mapPostion.y * map->tileSize.y +
+			tilePosition.y * map->tileSize.y + entityType->offsetPixels.y);
 		
 		// Set the sprite position
 		
@@ -69,7 +75,7 @@ void Entity::advanceFrame(float deltaTime)
 }
 
 
-void Entity::place(const sf::Vector2f &mapPostion)
+void Entity::place(const sf::Vector2u &mapPostion)
 {
 	this->mapPostion = mapPostion;
 	
@@ -77,9 +83,9 @@ void Entity::place(const sf::Vector2f &mapPostion)
 }
 
 
-void Entity::move(const sf::Vector2f &deltaPosition)
+void Entity::move(const sf::Vector2u &deltaPosition)
 {
-	this->mapPostion += deltaPosition;
+	mapPostion += deltaPosition;
 	
 	hasMoved = true;
 }
@@ -87,8 +93,7 @@ void Entity::move(const sf::Vector2f &deltaPosition)
 
 void Entity::quantize()
 {
-	// Round the map positions to the nearest integer map tile
+	// Set the fractional part to zero
 	
-	mapPostion.x = floorf(mapPostion.x + 0.5f);
-	mapPostion.y = floorf(mapPostion.y + 0.5f);
+	tilePosition = sf::Vector2f(0.0f, 0.0f);
 }

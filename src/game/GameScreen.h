@@ -33,15 +33,11 @@ namespace bit
 		
 		void loadMap(JSONValue &mapObject);
 		
-		void addEntity(shared_ptr<Entity> entity, int zOrder);
-		
 		shared_ptr<ContentManager> contentManager;
 		shared_ptr<Map> map;
+		shared_ptr<Entity> player;
 		
 	private:
-		/**	A complete list of entities to be rendered on the map
-		*/
-		std::vector<shared_ptr<Entity> > entities;
 	};
 }
 

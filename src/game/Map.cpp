@@ -18,8 +18,6 @@ using namespace bit;
 
 Map::Map(const sf::Vector2u &screenSize)
 {
-	mapProperties.reset(new MapProperties);
-	
 	// Create the map view
 	
 	mapView.reset(new sf::View);
@@ -39,23 +37,32 @@ Map::Map(const sf::Vector2u &screenSize)
 	
 	mapSprite.reset(new sf::Sprite);
 	mapSprite->setTexture(mapTexture->getTexture());
+	
+	loaded = false;
 }
 
 
 void Map::load(JSONValue &mapObject)
 {
+	// Check if the map is already loaded
+	
+	if (loaded)
+		throw bit::Exception("Map is already loaded");
+	
+	// The map must be orthogonal
+	
 	if (mapObject["orientation"].toString() != "orthogonal")
 		throw bit::Exception("Map must be orthogonal");
 	
 	// Set the tile dimensions
 	
-	mapProperties->tileSize.x = mapObject["tilewidth"].toInteger();
-	mapProperties->tileSize.y = mapObject["tileheight"].toInteger();
+	tileSize.x = mapObject["tilewidth"].toInteger();
+	tileSize.y = mapObject["tileheight"].toInteger();
 	
-	mapProperties->mapSize.x = mapObject["width"].toInteger();
-	mapProperties->mapSize.y = mapObject["height"].toInteger();
+	mapSize.x = mapObject["width"].toInteger();
+	mapSize.y = mapObject["height"].toInteger();
 	
-	if (mapProperties->tileSize.x <= 0 || mapProperties->tileSize.y <= 0)
+	if (tileSize.x <= 0 || tileSize.y <= 0)
 		throw bit::Exception("Tile dimensions must be greater than zero");
 	
 	// Build tilesets
@@ -91,6 +98,40 @@ void Map::load(JSONValue &mapObject)
 	// Clear the temporary tiles map
 	
 	tiles.clear();
+	
+	loaded = true;
+}
+
+
+void Map::advanceFrame(float deltaTime)
+{
+	// Iterate through each entity
+	
+	for (std::vector<shared_ptr<Entity> >::iterator entityIt =
+		entities.begin(); entityIt != entities.end(); entityIt++)
+	{
+		// Advance the entity's frame
+		
+		(*entityIt)->advanceFrame(deltaTime);
+	}
+}
+
+
+void Map::addEntity(shared_ptr<Entity> entity, int zOrder)
+{
+	// Append the entity to the entities list
+	
+	entities.push_back(entity);
+	
+	// Set a weak pointer to this Map
+	
+	weak_ptr<Map> thisWeak(shared_from_this());
+	entity->mapWeak = thisWeak;
+	
+	// Insert the entity's sprite into the sprites list
+	
+	std::pair<int, shared_ptr<sf::Sprite> > spritePair(zOrder, entity->sprite);
+	sprites.insert(spritePair);
 }
 
 
@@ -216,8 +257,8 @@ void Map::loadLayer(JSONValue &layerObject, int zOrder)
 		if (gid == 0)
 			continue;
 		
-		int pixelX = (mapX + index % mapWidth) * mapProperties->tileSize.x;
-		int pixelY = (mapY + index / mapWidth) * mapProperties->tileSize.y;
+		int pixelX = (mapX + index % mapWidth) * tileSize.x;
+		int pixelY = (mapY + index / mapWidth) * tileSize.y;
 		
 		// Create the Graphic from the appropriate tile
 		
