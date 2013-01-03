@@ -20,16 +20,20 @@ namespace bit
 	public:
 		~JSONValue();
 		
-		/**
-		 * Accesses a value specified by the key
-		 *
-		 * This operation is only valid for objects.
-		 */
+		/**	Checks if the object contains a value with the given key
+		*/
+		bool has(const std::string &key);
+		
+		/**	Accesses a value specified by the key
+			
+			This operation is only valid for objects.
+		*/
 		JSONValue operator[](const std::string &key);
 		
-		/**
-		 * Accesses a value specified by an integer index
-		 */
+		/**	Accesses a value specified by an integer index
+			
+			This operation is only valid for arrays.
+		*/
 		JSONValue operator[](int index);
 		
 		bool isArray();

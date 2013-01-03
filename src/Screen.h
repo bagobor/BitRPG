@@ -25,7 +25,13 @@ namespace bit
 			this->screenSize = screenSize;
 		}
 		
+		/**	Called before events are checked
+		*/
+		virtual void preCheckEvents() {}
+		
 		/**	Handles an SFML input event caught from the current window
+			
+			@returns whether the event was caught
 		*/
 		virtual bool checkEvent(sf::Event &event)
 		{

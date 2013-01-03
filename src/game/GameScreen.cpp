@@ -14,6 +14,40 @@ using namespace bit;
 using namespace sf;
 
 
+void GameScreen::preCheckEvents()
+{
+	// TEMP
+	// Move the player based on currently pressed keys
+	
+	if (player && player->isMoving())
+	{
+		sf::Vector2i movement(0, 0);
+		
+		if (Keyboard::isKeyPressed(Keyboard::Right))
+			movement = sf::Vector2i(1, 0);
+		
+		else if (Keyboard::isKeyPressed(Keyboard::Left))
+			movement = sf::Vector2i(-1, 0);
+		
+		else if (Keyboard::isKeyPressed(Keyboard::Up))
+			movement = sf::Vector2i(0, -1);
+		
+		else if (Keyboard::isKeyPressed(Keyboard::Down))
+			movement = sf::Vector2i(0, 1);
+		
+		else
+			return;
+		
+		// Add a destination to the player
+		
+		sf::Vector2i destination = player->getCurrentDestination() + movement;
+		
+		player->clearDestinations();
+		player->addDestination(destination);
+	}
+}
+
+
 bool GameScreen::checkEvent(Event &event)
 {
 	// Catch key events
@@ -23,23 +57,33 @@ bool GameScreen::checkEvent(Event &event)
 		Event::KeyEvent keyEvent = event.key;
 		
 		// TEMP
+		// Move player
 		
 		if (player)
 		{
+			sf::Vector2i movement(0, 0);
+			
 			if (keyEvent.code == Keyboard::Right)
-				player->move(sf::Vector2u(1, 0));
+				movement = sf::Vector2i(1, 0);
 			
 			else if (keyEvent.code == Keyboard::Left)
-				player->move(sf::Vector2u(-1, 0));
+				movement = sf::Vector2i(-1, 0);
 			
 			else if (keyEvent.code == Keyboard::Up)
-				player->move(sf::Vector2u(0, -1));
+				movement = sf::Vector2i(0, -1);
 			
 			else if (keyEvent.code == Keyboard::Down)
-				player->move(sf::Vector2u(0, 1));
+				movement = sf::Vector2i(0, 1);
 			
 			else
 				return false;
+			
+			// Add a destination to the player
+			
+			sf::Vector2i destination = player->getCurrentDestination() + movement;
+			
+			player->clearDestinations();
+			player->addDestination(destination);
 			
 			return true;
 		}
@@ -78,4 +122,10 @@ void GameScreen::loadMap(JSONValue &mapObject)
 	map.reset(new Map(screenSize));
 	map->contentManager = contentManager;
 	map->load(mapObject);
+}
+
+
+void GameScreen::setPlayer(shared_ptr<Entity> player)
+{
+	this->player = player;
 }

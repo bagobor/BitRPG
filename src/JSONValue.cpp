@@ -28,6 +28,27 @@ JSONValue::~JSONValue()
 }
 
 
+bool JSONValue::has(const std::string &key)
+{
+	Locker locker(isolate);
+	Isolate::Scope isolateScope(isolate);
+	HandleScope handleScope;
+	
+	// Check if value is an object
+	
+	if (!value->IsObject())
+		throw bit::Exception("JSONValue is not an object");
+	
+	Local<Value> valueLocal = Local<Value>::New(value);
+	Local<Object> valueObject = Local<Object>::Cast(valueLocal);
+	Local<String> keyString = String::New(key.c_str());
+	
+	// Check if key exists
+	
+	return valueObject->Has(keyString);
+}
+
+
 JSONValue JSONValue::operator[](const std::string &key)
 {
 	Locker locker(isolate);

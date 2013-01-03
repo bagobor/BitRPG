@@ -39,52 +39,66 @@ void EntityType::load(JSONValue &entityValue)
 	
 	int tilesetLength = tilesetTextures.size();
 	
+	// Get default frame
+	
+	int defaultFrameId = entityValue["defaultframe"].toInteger();
+	defaultFrame = tilesetTextures[defaultFrameId];
+	
 	// Get the animations
 	
-	JSONValue animationsValue = entityValue["animations"];
-	int animationsLength = animationsValue.arrayLength();
-	
-	for (int animationIndex = 0; animationIndex < animationsLength; ++animationIndex)
+	if (entityValue.has("animations"))
 	{
-		JSONValue animationValue = animationsValue[animationIndex];
+		JSONValue animationsValue = entityValue["animations"];
+		int animationsLength = animationsValue.arrayLength();
 		
-		// Create a new Animation
-		
-		shared_ptr<Animation> animation(new Animation);
-		animation->subFrames = animationValue["framecount"].toInteger();
-		std::string animationName = animationValue["name"].toString();
-		
-		// Iterate through each frame
-		
-		JSONValue framesValue = animationValue["frames"];
-		int framesLength = framesValue.arrayLength();
-		
-		for (int frameIndex = 0; frameIndex < framesLength; ++frameIndex)
+		for (int animationIndex = 0; animationIndex < animationsLength; ++animationIndex)
 		{
-			// Get the frame texture
+			JSONValue animationValue = animationsValue[animationIndex];
 			
-			int frameId = framesValue[frameIndex].toInteger();
+			// Create a new Animation
 			
-			if (frameId < 0 || tilesetLength <= frameId)
-				throw bit::Exception("Tileset index out of bounds");
+			shared_ptr<Animation> animation(new Animation);
+			animation->subFrames = animationValue["framecount"].toInteger();
+			std::string animationName = animationValue["name"].toString();
 			
-			shared_ptr<sf::Texture> frameTexture = tilesetTextures[frameId];
+			// Iterate through each frame
 			
-			// Add the frame to the frames list
+			JSONValue framesValue = animationValue["frames"];
+			int framesLength = framesValue.arrayLength();
 			
-			animation->frames.push_back(frameTexture);
+			for (int frameIndex = 0; frameIndex < framesLength; ++frameIndex)
+			{
+				// Get the frame texture
+				
+				int frameId = framesValue[frameIndex].toInteger();
+				
+				if (frameId < 0 || tilesetLength <= frameId)
+					throw bit::Exception("Tileset index out of bounds");
+				
+				shared_ptr<sf::Texture> frameTexture = tilesetTextures[frameId];
+				
+				// Add the frame to the frames list
+				
+				animation->frames.push_back(frameTexture);
+			}
+			
+			// Add the animation to the animations list
+			
+			std::pair<std::string, shared_ptr<Animation> > animationPair(
+				animationName, animation);
+			animations.insert(animationPair);
 		}
-		
-		// Add the animation to the animations list
-		
-		std::pair<std::string, shared_ptr<Animation> > animationPair(
-			animationName, animation);
-		animations.insert(animationPair);
 	}
 }
 
 
-shared_ptr<EntityType::Animation> EntityType::getAnimation(const std::string &animationName)
+shared_ptr<sf::Texture> EntityType::getDefaultFrame()
+{
+	return defaultFrame;
+}
+
+
+shared_ptr<Animation> EntityType::getAnimation(const std::string &animationName)
 {
 	std::map<std::string, shared_ptr<Animation> >::iterator animationIt =
 		animations.find(animationName);

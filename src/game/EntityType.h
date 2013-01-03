@@ -20,22 +20,24 @@ namespace bit
 	class JSONValue;
 	class ContentManager;
 	
+	struct Animation
+	{
+		std::vector<shared_ptr<sf::Texture> > frames;
+		int subFrames;
+	};
+	
 	class EntityType
 	{
 	public:
-		struct Animation
-		{
-			std::vector<shared_ptr<sf::Texture> > frames;
-			int subFrames;
-		};
-		
 		void load(JSONValue &entityValue);
+		shared_ptr<sf::Texture> getDefaultFrame();
 		shared_ptr<Animation> getAnimation(const std::string &animationName);
 		
 		shared_ptr<ContentManager> contentManager;
-		sf::Vector2u offsetPixels;
+		sf::Vector2i offsetPixels;
 		
 	private:
+		shared_ptr<sf::Texture> defaultFrame;
 		std::map<std::string, shared_ptr<Animation> > animations;
 	};
 }

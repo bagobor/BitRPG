@@ -120,6 +120,9 @@ void WindowManager::run()
 	
 	while (window && window->isOpen())
 	{
+		if (activeScreen)
+			activeScreen->preCheckEvents();
+		
 		Event event;
 		
 		while (window->pollEvent(event))

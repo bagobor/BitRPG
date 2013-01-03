@@ -182,9 +182,9 @@ void Application::runScript()
 		playerType->load(playerValue);
 		
 		shared_ptr<Entity> player(new Entity(playerType));
-		player->place(sf::Vector2u(0, 0));
+		player->setPosition(sf::Vector2i(0, 0));
 		gameScreen->map->addEntity(player, 1);
-		gameScreen->player = player;
+		gameScreen->setPlayer(player);
 		
 		// Set the active screen
 		

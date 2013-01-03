@@ -24,6 +24,7 @@ namespace bit
 	class GameScreen : public Screen
 	{
 	public:
+		void preCheckEvents();
 		bool checkEvent(sf::Event &event);
 		void advanceFrame(float deltaTime);
 		
@@ -33,11 +34,13 @@ namespace bit
 		
 		void loadMap(JSONValue &mapObject);
 		
+		void setPlayer(shared_ptr<Entity> player);
+		
 		shared_ptr<ContentManager> contentManager;
 		shared_ptr<Map> map;
-		shared_ptr<Entity> player;
 		
 	private:
+		shared_ptr<Entity> player;
 	};
 }
 
